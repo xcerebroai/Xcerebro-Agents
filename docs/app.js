@@ -347,7 +347,7 @@ function showToast(msg) {
 // =========================================================
 const INSTALL_COMMANDS = {
   'claude-code': `<span class="cmt"># 1. Clone the repo</span>
-git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 
 <span class="cmt"># 2. Make scripts executable (macOS)</span>
@@ -356,7 +356,7 @@ chmod +x scripts/*.sh
 <span class="cmt"># 3. Install for Claude Code</span>
 ./scripts/install.sh --tool claude-code`,
   'cursor': `<span class="cmt"># 1. Clone</span>
-git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 
 <span class="cmt"># 2. Make scripts executable</span>
@@ -366,7 +366,7 @@ chmod +x scripts/*.sh
 cd /path/to/your/project
 /path/to/Xcerebro-Agents/scripts/install.sh --tool cursor`,
   'copilot': `<span class="cmt"># 1. Clone</span>
-git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 
 <span class="cmt"># 2. Make scripts executable</span>
@@ -375,7 +375,7 @@ chmod +x scripts/*.sh
 <span class="cmt"># 3. Install for GitHub Copilot</span>
 ./scripts/install.sh --tool copilot`,
   'aider': `<span class="cmt"># 1. Clone</span>
-git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 
 <span class="cmt"># 2. Convert + install (project-scoped)</span>
@@ -384,7 +384,7 @@ chmod +x scripts/*.sh
 cd /path/to/your/project
 /path/to/Xcerebro-Agents/scripts/install.sh --tool aider`,
   'windsurf': `<span class="cmt"># 1. Clone</span>
-git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 
 <span class="cmt"># 2. Convert + install (project-scoped)</span>
@@ -395,26 +395,26 @@ cd /path/to/your/project
 };
 
 const INSTALL_PLAIN = {
-  'claude-code': `git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+  'claude-code': `git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 chmod +x scripts/*.sh
 ./scripts/install.sh --tool claude-code`,
-  'cursor': `git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+  'cursor': `git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 chmod +x scripts/*.sh
 cd /path/to/your/project
 /path/to/Xcerebro-Agents/scripts/install.sh --tool cursor`,
-  'copilot': `git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+  'copilot': `git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 chmod +x scripts/*.sh
 ./scripts/install.sh --tool copilot`,
-  'aider': `git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+  'aider': `git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 chmod +x scripts/*.sh
 ./scripts/convert.sh --tool aider
 cd /path/to/your/project
 /path/to/Xcerebro-Agents/scripts/install.sh --tool aider`,
-  'windsurf': `git clone https://github.com/Deftones420x/Xcerebro-Agents.git
+  'windsurf': `git clone https://github.com/xcerebroai/Xcerebro-Agents.git
 cd Xcerebro-Agents
 chmod +x scripts/*.sh
 ./scripts/convert.sh --tool windsurf
