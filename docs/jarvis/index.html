@@ -514,6 +514,26 @@
       detected.innerHTML = 'JARVIS installs on <b>Mac</b> or <b>Windows</b>.';
     }
 
+    // ----- Prefer the native double-click installers (JARVIS-Setup.exe/.dmg)
+    //       once they're published as release assets; until then keep the
+    //       script downloads (.ps1/.sh) as the primary link. The one-liners
+    //       below remain the secondary path either way. GitHub's API is
+    //       CORS-enabled, so this works from a static page; any failure
+    //       (offline / rate-limit / no asset) silently keeps the scripts.
+    (function upgradeToSetupBinaries() {
+      if (!win && !mac) return;
+      fetch('https://api.github.com/repos/xcerebroai/jarvis-agent/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (rel) {
+          if (!rel || !rel.assets) return;
+          var url = {};
+          rel.assets.forEach(function (a) { url[a.name] = a.browser_download_url; });
+          if (win && url['JARVIS-Setup.exe']) { win.href = url['JARVIS-Setup.exe']; win.setAttribute('data-setup', '1'); }
+          if (mac && url['JARVIS-Setup.dmg']) { mac.href = url['JARVIS-Setup.dmg']; mac.setAttribute('data-setup', '1'); }
+        })
+        .catch(function () {});
+    })();
+
     // ----- Copy-to-clipboard
     document.querySelectorAll('.copy').forEach(function (b) {
       b.addEventListener('click', function () {
