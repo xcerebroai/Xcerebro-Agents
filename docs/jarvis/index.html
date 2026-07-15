@@ -1,13 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="nojs">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="dark" />
 <title>JARVIS — Your AI Employee</title>
-<meta name="description" content="JARVIS — your AI employee that runs your business 24/7. Download for Mac or Windows. Works as a desktop app, in your terminal, and over Telegram & WhatsApp." />
+<meta name="description" content="JARVIS — your AI employee that runs your business 24/7. Download for Mac or Windows. One agent across desktop, terminal, and Telegram & WhatsApp — with its own memory, skills, and tools." />
 <meta name="theme-color" content="#0A0A0A" />
-<!-- Open Graph / Twitter — rich link previews in Slack, iMessage, X, etc. -->
 <meta property="og:title" content="JARVIS — Your AI Employee" />
 <meta property="og:description" content="Your AI Employee. Runs Your Business 24/7. Download for Mac or Windows." />
 <meta property="og:type" content="website" />
@@ -21,212 +20,443 @@
 <meta name="twitter:description" content="Your AI Employee. Runs Your Business 24/7. Download for Mac or Windows." />
 <meta name="twitter:image" content="https://xcerebro.ai/jarvis/og.png" />
 <link rel="canonical" href="https://xcerebro.ai/jarvis/" />
-<!-- Inline SVG favicon (no external requests) -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0A0A'/%3E%3Cpath d='M16 7l6 9-6 9-6-9z' fill='%233B82F6'/%3E%3C/svg%3E" />
+<script>document.documentElement.className='';</script>
 <style>
   :root{
-    --black:#0A0A0A; --midnight:#0F172A; --panel:#111a2e; /* --panel = a subtle elevation of --midnight for cards */
+    --black:#0A0A0A; --midnight:#0F172A; --panel:#111a2e;
     --electric:#3B82F6; --light:#60A5FA;
-    --text:#E5E7EB; --muted:#9AA4B2; --dim:#6B7280; --border:#1E293B;
+    --text:#E5E7EB; --muted:#9AA4B2; --dim:#6B7280; --border:#1F2937;
+    --glow:rgba(59,130,246,.45);
+    --grad:linear-gradient(120deg,#60A5FA,#3B82F6);
     --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{
-    font-family:var(--font); color:var(--text); background:var(--black);
-    line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    overflow-x:hidden;
-  }
+  body{font-family:var(--font); color:var(--text); background:var(--black); line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden; position:relative}
+  /* faint blueprint grid so the dark isn't flat */
+  body::before{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none;
+    background-image:linear-gradient(rgba(59,130,246,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,.05) 1px, transparent 1px);
+    background-size:66px 66px;
+    -webkit-mask-image:radial-gradient(130% 90% at 50% 0%, #000 35%, transparent 82%);
+    mask-image:radial-gradient(130% 90% at 50% 0%, #000 35%, transparent 82%)}
+  /* two large ambient glows (electric upper-left, deeper blue upper-right) */
+  body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none;
+    background:radial-gradient(46% 40% at 14% 6%, rgba(59,130,246,.17), transparent 62%),
+      radial-gradient(44% 38% at 86% 4%, rgba(29,78,216,.15), transparent 62%)}
+
   a{color:var(--light); text-decoration:none}
-  a:hover{color:var(--light); text-decoration:underline}
-  /* Visible, on-brand focus ring for keyboard navigation */
-  a:focus-visible,.btn:focus-visible{outline:2px solid var(--light); outline-offset:3px; border-radius:6px}
-  .wrap{max-width:1040px; margin:0 auto; padding:0 24px}
-  section{position:relative}
+  a:hover{text-decoration:underline}
+  a:focus-visible,.btn:focus-visible,.tab:focus-visible,.copy:focus-visible,button:focus-visible{
+    outline:2px solid var(--light); outline-offset:3px; border-radius:6px}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 24px}
+  .grad{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
 
-  /* ---------- Hero ---------- */
-  .hero{
-    text-align:center; padding:96px 24px 72px; position:relative; overflow:hidden;
-  }
-  .hero::before{
-    content:""; position:absolute; inset:-40% 0 auto 0; height:640px; z-index:0;
-    background:radial-gradient(60% 60% at 50% 30%, rgba(59,130,246,.28), rgba(59,130,246,.06) 45%, transparent 70%);
-    pointer-events:none;
-  }
-  .hero > *{position:relative; z-index:1}
-  .wordmark{
-    font-weight:800; font-size:clamp(3.2rem,13vw,7rem); letter-spacing:.06em; line-height:1;
-    background:linear-gradient(180deg,var(--light),var(--electric));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    filter:drop-shadow(0 0 28px rgba(59,130,246,.45));
-  }
-  .tagline{margin-top:22px; font-size:clamp(1.05rem,3.4vw,1.5rem); font-weight:600; color:var(--text)}
-  .subtag{margin-top:10px; color:var(--muted); font-size:1rem}
+  /* section label: TEXT ——• */
+  .label{display:inline-flex; align-items:center; gap:12px; color:var(--light);
+    font-size:.74rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase}
+  .label .line{width:42px; height:1px; background:linear-gradient(90deg, transparent, var(--electric))}
+  .label .dot{width:6px; height:6px; border-radius:50%; background:var(--light); box-shadow:0 0 9px var(--light)}
+  .section-head{text-align:center; max-width:660px; margin:0 auto 46px}
+  .section-head .label{justify-content:center; margin-bottom:16px}
+  h2{font-weight:800; font-size:clamp(1.7rem,4.6vw,2.5rem); letter-spacing:-.015em; line-height:1.14}
+  .section-head p{color:var(--muted); margin-top:14px; font-size:1.05rem}
 
-  /* ---------- Download ---------- */
-  .downloads{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:40px}
-  .btn{
-    display:inline-flex; align-items:center; gap:10px; padding:15px 26px; border-radius:12px;
-    font-weight:700; font-size:1.05rem; border:1.5px solid var(--electric);
-    transition:transform .12s ease, box-shadow .2s ease, background .2s ease; cursor:pointer;
-    background:transparent; color:var(--light); white-space:nowrap;
-  }
+  /* reveal-on-scroll (JS opts in; no-JS + reduced-motion = visible) */
+  html:not(.nojs) .reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1)}
+  html:not(.nojs) .reveal.show{opacity:1; transform:none}
+
+  /* ---------- HERO ---------- */
+  .hero{min-height:100svh; display:grid; place-items:center; text-align:center; padding:96px 24px 72px; position:relative; overflow:hidden}
+  .glows{position:absolute; inset:0; z-index:0; pointer-events:none; will-change:transform}
+  .glow{position:absolute; border-radius:50%; left:50%; top:40%; transform:translate(-50%,-50%); filter:blur(34px)}
+  .glow.g1{width:min(760px,92vw); height:min(760px,92vw);
+    background:radial-gradient(circle, rgba(59,130,246,.36), rgba(59,130,246,.09) 46%, transparent 68%); animation:pulse 7s ease-in-out infinite}
+  .glow.g2{width:min(440px,62vw); height:min(440px,62vw); top:34%; left:38%;
+    background:radial-gradient(circle, rgba(96,165,250,.32), transparent 62%); animation:pulse 5.5s ease-in-out infinite .8s}
+  .glow.g3{width:min(520px,66vw); height:min(520px,66vw); top:36%; left:64%;
+    background:radial-gradient(circle, rgba(29,78,216,.28), transparent 62%); animation:pulse 8s ease-in-out infinite .3s}
+  @keyframes pulse{0%,100%{opacity:.7; transform:translate(-50%,-50%) scale(1)} 50%{opacity:1; transform:translate(-50%,-50%) scale(1.08)}}
+  .hero .inner{position:relative; z-index:1; max-width:820px}
+  .pill{display:inline-flex; align-items:center; gap:9px; padding:7px 16px; border-radius:999px;
+    border:1px solid rgba(59,130,246,.42); background:rgba(59,130,246,.07); color:var(--light);
+    font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; box-shadow:0 0 22px rgba(59,130,246,.16)}
+  .pill .d{width:7px; height:7px; border-radius:50%; background:var(--light); box-shadow:0 0 9px var(--light)}
+  .h-title{font-weight:800; font-size:clamp(2.7rem,8vw,5rem); line-height:1.04; letter-spacing:-.02em; margin-top:24px}
+  .h-title span{display:block}
+  .h-title .l1{color:#fff; filter:drop-shadow(0 0 22px rgba(59,130,246,.28))}
+  .h-title .l2{filter:drop-shadow(0 0 30px rgba(59,130,246,.4))}
+  .subtag{margin:22px auto 0; max-width:640px; color:var(--muted); font-size:clamp(1rem,2.4vw,1.15rem)}
+
+  .downloads{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:38px}
+  .btn{display:inline-flex; align-items:center; gap:10px; padding:15px 28px; border-radius:12px;
+    font-weight:700; font-size:1.05rem; cursor:pointer; white-space:nowrap;
+    transition:transform .14s ease, box-shadow .25s ease, background .25s, color .2s, border-color .2s;
+    border:1.5px solid rgba(59,130,246,.5); background:rgba(59,130,246,.05); color:var(--light)}
   .btn svg{width:22px; height:22px; flex:0 0 auto}
-  .btn:hover{transform:translateY(-2px); color:#fff; text-decoration:none}
-  .btn.primary{
-    background:var(--electric); color:#fff; border-color:var(--electric);
-    box-shadow:0 8px 30px rgba(59,130,246,.45);
-  }
-  .btn.primary:hover{box-shadow:0 10px 38px rgba(59,130,246,.6)}
+  .btn:hover{transform:translateY(-2px); color:#fff; text-decoration:none; border-color:var(--electric); box-shadow:0 10px 40px var(--glow)}
+  .btn.primary{background:var(--grad); color:#fff; border-color:transparent; box-shadow:0 8px 34px var(--glow)}
+  .btn.primary:hover{box-shadow:0 14px 52px rgba(59,130,246,.7)}
   .btn .rec{font-size:.7rem; font-weight:600; opacity:.85; margin-left:2px}
   .btn .rec:empty{display:none}
   .detected{margin-top:16px; color:var(--dim); font-size:.9rem; min-height:1.2em}
   .detected b{color:var(--light); font-weight:600}
 
-  /* one-line install instructions */
-  .instructions{margin-top:26px; display:flex; flex-direction:column; gap:10px; align-items:center}
-  .cmd{
-    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.9rem;
-    background:var(--midnight); border:1px solid var(--border); color:var(--light);
-    padding:10px 14px; border-radius:9px; max-width:100%; overflow-x:auto; white-space:nowrap;
-  }
-  .cmd .os{color:var(--muted); user-select:none}
-  .instr-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; opacity:.55; transition:opacity .2s}
-  .instr-row.active{opacity:1}
-  .instr-row .lbl{color:var(--muted); font-size:.85rem; min-width:74px; text-align:right}
+  /* inline install under hero */
+  .hero-install{margin-top:30px; width:100%; max-width:620px; margin-left:auto; margin-right:auto}
+  .tabs{position:relative}
+  .tabs input{position:absolute; opacity:0; pointer-events:none}
+  .tablist{display:flex; gap:8px; justify-content:center; margin-bottom:14px; flex-wrap:wrap}
+  .tab{display:inline-flex; align-items:center; gap:8px; padding:9px 18px; border-radius:10px; cursor:pointer;
+    border:1px solid var(--border); background:var(--panel); color:var(--muted); font-weight:600; font-size:.92rem;
+    transition:border-color .2s, color .2s, box-shadow .2s, background .2s}
+  .tab svg{width:16px; height:16px}
+  .tab:hover{color:var(--text); border-color:#2b3a55}
+  .panel{display:none}
+  #os-win:checked ~ .tablist label[for=os-win],
+  #os-mac:checked ~ .tablist label[for=os-mac]{color:#fff; border-color:var(--electric); background:rgba(59,130,246,.1); box-shadow:0 0 0 1px var(--electric), 0 6px 24px var(--glow)}
+  #os-win:checked ~ .panels .panel-win,
+  #os-mac:checked ~ .panels .panel-mac{display:block}
+  .cmdbar{display:flex; align-items:center; gap:12px; text-align:left; background:var(--midnight);
+    border:1px solid rgba(59,130,246,.28); border-radius:12px; padding:13px 15px; box-shadow:0 0 40px rgba(59,130,246,.1)}
+  .cmdbar .prompt{color:var(--electric); font-family:var(--mono); user-select:none}
+  .cmdbar code{font-family:var(--mono); font-size:.88rem; color:var(--light); overflow-x:auto; white-space:nowrap; flex:1}
+  .copy{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-family:var(--font);
+    background:rgba(59,130,246,.12); color:var(--light); border:1px solid rgba(59,130,246,.4);
+    border-radius:8px; padding:7px 12px; font-size:.8rem; font-weight:600; transition:background .2s, color .2s}
+  .copy:hover{background:var(--electric); color:#fff}
+  .copy svg{width:14px; height:14px}
+  .copy .lbl-done{display:none}
+  .copy.copied .lbl-do{display:none}.copy.copied .lbl-done{display:inline}
+  .copy.copied{background:#16321f; border-color:#2f7d4f; color:#7ee0a3}
+  .nojs .copy{display:none}
+  .install-note{color:var(--dim); font-size:.85rem; margin-top:12px; text-align:center}
 
-  .phone-note{display:none; margin-top:22px; color:var(--muted); font-size:.95rem}
-  body.is-mobile .phone-note{display:block}
+  /* ---------- PRODUCT SHOT ---------- */
+  .product{padding:96px 0}
+  .mock-wrap{max-width:940px; margin:0 auto; position:relative}
+  .mock-wrap::before{content:""; position:absolute; inset:4% 8% -10% 8%; z-index:0;
+    background:radial-gradient(60% 60% at 50% 40%, var(--glow), transparent 70%); filter:blur(46px)}
+  .mock{position:relative; z-index:1; border:1px solid #24324a; border-radius:16px; overflow:hidden;
+    background:var(--midnight); box-shadow:0 34px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(59,130,246,.16)}
+  .mock .chrome{display:flex; align-items:center; gap:8px; padding:11px 16px; background:#0c1424; border-bottom:1px solid var(--border)}
+  .mock .dot{width:11px; height:11px; border-radius:50%}
+  .mock .dot.r{background:#ff5f57}.mock .dot.y{background:#febc2e}.mock .dot.g{background:#28c840}
+  .mock .addr{flex:1; margin-left:12px; height:26px; border-radius:7px; background:#0a1120; border:1px solid var(--border);
+    display:flex; align-items:center; padding:0 12px; color:var(--dim); font-size:.74rem; font-family:var(--mono); gap:8px}
+  .mock .addr .lock{width:9px; height:9px; border-radius:2px; border:1.5px solid var(--dim)}
+  .mock .body{display:grid; grid-template-columns:196px 1fr; min-height:380px}
+  .mock .side{border-right:1px solid var(--border); padding:16px 12px; background:#0b1220}
+  .mock .side .brand{font-weight:800; letter-spacing:.14em; font-size:.85rem; margin:4px 8px 16px}
+  .mock .side .nav{display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; color:var(--muted); font-size:.85rem; margin-bottom:4px}
+  .mock .side .nav.active{background:rgba(59,130,246,.14); color:#fff}
+  .mock .side .nav svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.7}
+  .mock .side .sess{margin:14px 8px 6px; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim)}
+  .mock .side .row{height:8px; border-radius:4px; background:#152036; margin:8px 6px}
+  .mock .side .row.s{width:70%}.mock .side .row.m{width:85%}
+  .mock .main{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; gap:16px}
+  .mock .splash{font-weight:800; font-size:clamp(2rem,6vw,3.4rem); letter-spacing:.08em; filter:drop-shadow(0 0 22px var(--glow))}
+  .mock .splash-sub{color:var(--dim); font-size:.9rem; margin-top:-6px}
+  .mock .inputbar{width:min(520px,92%); display:flex; align-items:center; gap:10px; background:#0c1424;
+    border:1px solid #26344e; border-radius:12px; padding:12px 14px; box-shadow:0 0 30px rgba(59,130,246,.12)}
+  .mock .inputbar .ph{color:var(--dim); font-size:.9rem; flex:1; text-align:left}
+  .mock .inputbar .send{width:30px; height:30px; border-radius:8px; background:var(--electric); display:grid; place-items:center; flex:0 0 auto}
+  .mock .inputbar .send svg{width:16px; height:16px; fill:#fff}
+  .mock .badge{position:absolute; top:14px; right:16px; font-size:.72rem; color:var(--light); border:1px solid rgba(59,130,246,.4); border-radius:20px; padding:3px 10px; background:rgba(59,130,246,.08)}
 
-  /* ---------- Sections ---------- */
-  .band{background:var(--midnight); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:64px 0}
-  h2{font-weight:700; font-size:clamp(1.5rem,4.4vw,2.1rem); text-align:center; letter-spacing:-.01em}
-  .lead{max-width:680px; margin:16px auto 0; text-align:center; color:var(--muted); font-size:1.05rem}
+  /* ---------- FEATURES ---------- */
+  .features{padding:40px 0 60px}
+  .feat{display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:center; padding:46px 0}
+  .feat:nth-child(even) .feat-art{order:2}
+  .feat .label{margin-bottom:14px}
+  .feat h3{font-weight:800; font-size:clamp(1.4rem,3vw,1.85rem); margin:0 0 12px; letter-spacing:-.015em; line-height:1.15}
+  .feat p{color:var(--muted); font-size:1.06rem; max-width:470px}
+  .feat-art{display:flex; justify-content:center}
+  .art{width:100%; max-width:380px; aspect-ratio:16/11; border:1px solid var(--border); border-radius:16px;
+    background:linear-gradient(180deg,#0e1626,#0b1120); display:grid; place-items:center; padding:22px;
+    box-shadow:0 0 46px rgba(59,130,246,.08); transition:border-color .25s, box-shadow .25s, transform .25s}
+  .feat:hover .art{border-color:rgba(59,130,246,.5); box-shadow:0 0 66px rgba(59,130,246,.18); transform:translateY(-3px)}
+  .art svg{width:100%; height:100%}
 
-  .features{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; margin-top:40px}
-  .card{
-    background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:22px 20px;
-    transition:border-color .2s, transform .12s;
-  }
-  .card:hover{border-color:var(--electric); transform:translateY(-2px)}
-  .card .ico{
-    width:40px; height:40px; border-radius:10px; display:grid; place-items:center; margin-bottom:14px;
-    background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.35);
-  }
-  .card .ico svg{width:22px; height:22px; stroke:var(--light); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
-  .card h3{font-size:1.05rem; font-weight:600; margin-bottom:6px}
-  .card p{color:var(--muted); font-size:.95rem}
-  .card p code{background:rgba(59,130,246,.12); color:var(--light); padding:1px 6px; border-radius:5px; font-size:.9em}
+  /* ---------- STATS ---------- */
+  .stats{padding:80px 0}
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
+  .stat{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center;
+    transition:border-color .25s, box-shadow .25s}
+  .stat:hover{border-color:rgba(59,130,246,.5); box-shadow:0 0 44px rgba(59,130,246,.14)}
+  .stat .num{font-weight:800; font-size:clamp(2.2rem,5vw,3rem); line-height:1; letter-spacing:-.02em}
+  .stat .lbl{color:var(--text); font-weight:600; margin-top:10px; font-size:.98rem}
+  .stat .sub{color:var(--dim); font-size:.82rem; margin-top:4px}
 
-  /* getting started */
-  .gs{padding:64px 0}
-  .gs-box{
-    max-width:720px; margin:28px auto 0; background:var(--panel); border:1px solid var(--border);
-    border-radius:14px; padding:26px 28px;
-  }
+  /* ---------- AFTER DOWNLOAD ---------- */
+  .gs{padding:88px 0; position:relative}
+  .gs::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(60% 50% at 50% 40%, rgba(59,130,246,.07), transparent 70%)}
+  .gs-box{max-width:720px; margin:0 auto; background:var(--panel); border:1px solid rgba(59,130,246,.28); border-radius:16px;
+    padding:30px 32px; box-shadow:0 0 50px rgba(59,130,246,.1)}
   .gs-box ol{margin:14px 0 0 20px; color:var(--muted)}
   .gs-box li{margin:8px 0}
   .gs-box li b{color:var(--text); font-weight:600}
+  .gs-box p code{background:rgba(59,130,246,.12); color:var(--light); padding:1px 6px; border-radius:5px; font-size:.9em}
 
-  /* footer */
-  footer{padding:40px 24px 56px; text-align:center; color:var(--dim); font-size:.9rem}
-  footer .links{margin-bottom:12px}
+  /* ---------- FOOTER ---------- */
+  footer{padding:56px 24px 64px; text-align:center; color:var(--dim); font-size:.9rem; border-top:1px solid var(--border)}
+  .verbadge{display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(59,130,246,.42);
+    background:rgba(59,130,246,.08); color:var(--light); border-radius:20px; padding:6px 16px; font-weight:600; font-size:.85rem; margin-bottom:22px}
+  .verbadge:hover{text-decoration:none; box-shadow:0 0 24px var(--glow)}
+  .verbadge .pip{width:7px; height:7px; border-radius:50%; background:#28c840; box-shadow:0 0 8px #28c840}
+  footer .links{margin-bottom:14px}
   footer .links a{margin:0 10px}
 
-  @media (max-width:940px){
-    .features{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* ---------- Responsive ---------- */
+  @media (max-width:860px){
+    .feat{grid-template-columns:1fr; gap:24px; padding:36px 0; text-align:center}
+    .feat:nth-child(even) .feat-art{order:0}
+    .feat .label{justify-content:center}
+    .feat p{margin:0 auto}
+    .feat-art{order:-1}
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .mock .body{grid-template-columns:1fr}
+    .mock .side{display:none}
   }
   @media (max-width:560px){
-    .hero{padding:72px 20px 56px}
+    .hero{padding:88px 20px 64px}
     .btn{width:100%; justify-content:center}
     .downloads{flex-direction:column}
-    .phone-note{display:block}
-    .instr-row .lbl{min-width:0; text-align:center; width:100%}
+    .cmdbar{flex-wrap:wrap}
+    .cmdbar code{flex-basis:100%; order:3}
   }
-  @media (max-width:460px){
-    .features{grid-template-columns:1fr}
-  }
+  @media (max-width:420px){ .stat-grid{grid-template-columns:1fr} }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
-    *{transition:none !important}
+    html:not(.nojs) .reveal{opacity:1 !important; transform:none !important; transition:none}
+    *{animation:none !important}
+    .glows{transform:none !important}
   }
 </style>
 </head>
 <body>
 
-  <!-- ===== Hero + Download ===== -->
+  <!-- ===== 1. HERO ===== -->
   <section class="hero">
-    <div class="wrap">
-      <h1 class="wordmark">JARVIS</h1>
-      <p class="tagline">Your AI Employee. Runs Your Business 24/7.</p>
-      <p class="subtag">One install. Works on your desktop, your terminal, and your phone.</p>
+    <div class="glows" id="glows" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span></div>
+    <div class="inner">
+      <span class="pill"><span class="d"></span>Your AI Employee. On Your Machine.</span>
+      <h1 class="h-title">
+        <span class="l1">Meet JARVIS.</span>
+        <span class="l2 grad">It Runs Your Business 24/7.</span>
+      </h1>
+      <p class="subtag">An AI agent that works across your desktop, terminal, and phone — with its own memory, its own skills, and the run of your tools.</p>
 
       <div class="downloads">
-        <a class="btn" id="btn-mac"
-           href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-mac.sh">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M16.5 3c.1 1.1-.35 2.15-1 2.9-.68.8-1.8 1.42-2.87 1.33-.12-1.06.39-2.17 1.02-2.87C14.4 3.6 15.55 3.05 16.5 3Zm3.2 14.9c-.5 1.16-.74 1.67-1.39 2.7-.9 1.43-2.18 3.2-3.76 3.22-1.4.02-1.76-.92-3.66-.9-1.9.01-2.3.92-3.7.89-1.58-.02-2.79-1.63-3.7-3.05-2.53-3.98-2.8-8.65-1.24-11.13C3.63 5.87 5.5 4.8 7.26 4.8c1.79 0 2.91.98 4.39.98 1.43 0 2.3-.98 4.37-.98 1.56 0 3.22.85 4.4 2.32-3.87 2.12-3.24 7.64-.72 8.78Z"/></svg>
-          <span>Download for Mac</span><span class="rec" data-rec></span>
-        </a>
-        <a class="btn" id="btn-win"
-           href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-windows.ps1">
+        <a class="btn primary" id="btn-win" href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-windows.ps1">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 5.1 10.5 4v7.5H3V5.1Zm0 13.8L10.5 20v-7.4H3v6.3Zm8.6 1.2L21 21.4V12.6h-9.4V20.1Zm0-16.2v7.6H21V2.6l-9.4 1.3Z"/></svg>
           <span>Download for Windows</span><span class="rec" data-rec></span>
         </a>
+        <a class="btn" id="btn-mac" href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-mac.sh">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M16.5 3c.1 1.1-.35 2.15-1 2.9-.68.8-1.8 1.42-2.87 1.33-.12-1.06.39-2.17 1.02-2.87C14.4 3.6 15.55 3.05 16.5 3Zm3.2 14.9c-.5 1.16-.74 1.67-1.39 2.7-.9 1.43-2.18 3.2-3.76 3.22-1.4.02-1.76-.92-3.66-.9-1.9.01-2.3.92-3.7.89-1.58-.02-2.79-1.63-3.7-3.05-2.53-3.98-2.8-8.65-1.24-11.13C3.63 5.87 5.5 4.8 7.26 4.8c1.79 0 2.91.98 4.39.98 1.43 0 2.3-.98 4.37-.98 1.56 0 3.22.85 4.4 2.32-3.87 2.12-3.24 7.64-.72 8.78Z"/></svg>
+          <span>Download for Mac</span><span class="rec" data-rec></span>
+        </a>
       </div>
-
       <div class="detected" id="detected"></div>
 
-      <div class="instructions">
-        <div class="instr-row" id="instr-mac">
-          <span class="lbl">On Mac</span>
-          <code class="cmd"><span class="os">Terminal ›</span> bash ~/Downloads/jarvis-mac.sh</code>
-        </div>
-        <div class="instr-row" id="instr-win">
-          <span class="lbl">On Windows</span>
-          <code class="cmd"><span class="os">PowerShell ›</span> powershell -ExecutionPolicy Bypass -File $HOME\Downloads\jarvis-windows.ps1</code>
+      <div class="hero-install">
+        <div class="tabs">
+          <input type="radio" name="os" id="os-win" checked>
+          <input type="radio" name="os" id="os-mac">
+          <div class="tablist" role="tablist" aria-label="Choose your operating system">
+            <label class="tab" for="os-win" tabindex="0" role="tab">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.1 10.5 4v7.5H3V5.1Zm0 13.8L10.5 20v-7.4H3v6.3Zm8.6 1.2L21 21.4V12.6h-9.4V20.1Zm0-16.2v7.6H21V2.6l-9.4 1.3Z"/></svg>Windows</label>
+            <label class="tab" for="os-mac" tabindex="0" role="tab">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.1 1.1-.35 2.15-1 2.9-.68.8-1.8 1.42-2.87 1.33-.12-1.06.39-2.17 1.02-2.87C14.4 3.6 15.55 3.05 16.5 3Zm3.2 14.9c-.5 1.16-.74 1.67-1.39 2.7-.9 1.43-2.18 3.2-3.76 3.22-1.4.02-1.76-.92-3.66-.9-1.9.01-2.3.92-3.7.89-1.58-.02-2.79-1.63-3.7-3.05-2.53-3.98-2.8-8.65-1.24-11.13C3.63 5.87 5.5 4.8 7.26 4.8c1.79 0 2.91.98 4.39.98 1.43 0 2.3-.98 4.37-.98 1.56 0 3.22.85 4.4 2.32-3.87 2.12-3.24 7.64-.72 8.78Z"/></svg>macOS</label>
+          </div>
+          <div class="panels">
+            <div class="panel panel-win">
+              <div class="cmdbar"><span class="prompt">PS&gt;</span>
+                <code>powershell -ExecutionPolicy Bypass -File $HOME\Downloads\jarvis-windows.ps1</code>
+                <button class="copy" type="button" data-copy="powershell -ExecutionPolicy Bypass -File $HOME\Downloads\jarvis-windows.ps1" aria-label="Copy command">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  <span class="lbl-do">Copy</span><span class="lbl-done">Copied</span></button>
+              </div>
+            </div>
+            <div class="panel panel-mac">
+              <div class="cmdbar"><span class="prompt">$</span>
+                <code>bash ~/Downloads/jarvis-mac.sh</code>
+                <button class="copy" type="button" data-copy="bash ~/Downloads/jarvis-mac.sh" aria-label="Copy command">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                  <span class="lbl-do">Copy</span><span class="lbl-done">Copied</span></button>
+              </div>
+            </div>
+          </div>
+          <p class="install-note">Run the one-liner after downloading. It installs prerequisites, JARVIS, and the desktop app.</p>
         </div>
       </div>
-
-      <p class="phone-note">JARVIS installs on your <b>Mac or Windows</b> computer — open this page there to download, then reach JARVIS from your phone over Telegram or WhatsApp.</p>
     </div>
   </section>
 
-  <!-- ===== What is JARVIS ===== -->
-  <section class="band">
+  <!-- ===== 2. PRODUCT SHOT ===== -->
+  <section class="product">
     <div class="wrap">
-      <h2>What is JARVIS?</h2>
-      <p class="lead">JARVIS is an AI employee that actually does the work — reads and writes code, runs tools, handles messages, and keeps your business moving while you sleep. It runs on your own machine, with your own AI provider key. No accounts, no billing, no lock-in.</p>
-
-      <div class="features">
-        <div class="card">
-          <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
-          <h3>Desktop app</h3>
-          <p>A native app for Mac &amp; Windows — chat, run tasks, and watch JARVIS work in real time.</p>
-        </div>
-        <div class="card">
-          <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></div>
-          <h3>Terminal &amp; CLI</h3>
-          <p>Prefer the command line? Run <code>jarvis</code> in your terminal with full capability parity.</p>
-        </div>
-        <div class="card">
-          <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.7 8.7 0 0 1-3.9-.9L3 20.5l1.5-4.4a8.4 8.4 0 0 1-1-4A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z"/></svg></div>
-          <h3>Telegram &amp; WhatsApp</h3>
-          <p>Message JARVIS from your phone. Delegate on the go and get results back in chat.</p>
-        </div>
-        <div class="card">
-          <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-          <h3>Runs 24/7</h3>
-          <p>Set it up once and JARVIS keeps working — scheduled jobs, live channels, always on.</p>
+      <div class="section-head reveal">
+        <span class="label">Desktop app<span class="line"></span><span class="dot"></span></span>
+        <h2>A home base for your <span class="grad">AI employee</span></h2>
+        <p>Chat, launch tasks, and watch JARVIS work — a native window on Mac and Windows. (Stylized preview; a real screenshot drops in after the smoke test.)</p>
+      </div>
+      <div class="mock-wrap reveal">
+        <div class="mock" role="img" aria-label="Stylized illustration of the JARVIS desktop application window">
+          <div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="addr"><span class="lock"></span>jarvis · session</span></div>
+          <div class="body">
+            <aside class="side">
+              <div class="brand grad">JARVIS</div>
+              <div class="nav active"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Sessions</div>
+              <div class="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9l2 2-2 2"/></svg>Skills &amp; Tools</div>
+              <div class="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H4z"/><path d="M8 20h8"/></svg>Messaging</div>
+              <div class="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Scheduled</div>
+              <div class="sess">Recent</div>
+              <div class="row m"></div><div class="row s"></div><div class="row m"></div>
+            </aside>
+            <div class="main">
+              <div class="badge">◆ Gateway ready</div>
+              <div class="splash grad">JARVIS</div>
+              <div class="splash-sub">Ask a question, paste an error, or point me at a repo.</div>
+              <div class="inputbar"><span class="ph">Message JARVIS…</span>
+                <span class="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></span></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== Getting started ===== -->
+  <!-- ===== 3. FEATURES ===== -->
+  <section class="features">
+    <div class="wrap">
+
+      <div class="feat reveal">
+        <div class="feat-text">
+          <span class="label">Lives everywhere<span class="line"></span><span class="dot"></span></span>
+          <h3>One agent, <span class="grad">every surface</span></h3>
+          <p>Reach JARVIS from Telegram, WhatsApp, Discord, Slack, your terminal, or the desktop app. One agent, one memory, wherever you work.</p>
+        </div>
+        <div class="feat-art"><div class="art">
+          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
+            <g stroke="#3B82F6" stroke-width="1.5" opacity=".5"><path d="M120 82 48 40M120 82 192 40M120 82 40 96M120 82 200 96M120 82 70 138M120 82 170 138"/></g>
+            <rect x="96" y="60" width="48" height="44" rx="10" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
+            <text x="120" y="87" fill="#60A5FA" font-family="Inter,sans-serif" font-size="13" font-weight="800" text-anchor="middle">JV</text>
+            <g fill="#0e1626" stroke="#60A5FA" stroke-width="1.4"><circle cx="48" cy="40" r="13"/><circle cx="192" cy="40" r="13"/><circle cx="40" cy="96" r="13"/><circle cx="200" cy="96" r="13"/><circle cx="70" cy="138" r="13"/><circle cx="170" cy="138" r="13"/></g>
+            <g fill="#60A5FA"><circle cx="48" cy="40" r="3.2"/><circle cx="192" cy="40" r="3.2"/><circle cx="40" cy="96" r="3.2"/><circle cx="200" cy="96" r="3.2"/><circle cx="70" cy="138" r="3.2"/><circle cx="170" cy="138" r="3.2"/></g>
+          </svg>
+        </div></div>
+      </div>
+
+      <div class="feat reveal">
+        <div class="feat-text">
+          <span class="label">Never forgets<span class="line"></span><span class="dot"></span></span>
+          <h3>A memory that <span class="grad">compounds</span></h3>
+          <p>JARVIS keeps a persistent memory, learns how your projects work, and writes its own reusable skills as it goes.</p>
+        </div>
+        <div class="feat-art"><div class="art">
+          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
+            <ellipse cx="120" cy="52" rx="52" ry="16" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
+            <path d="M68 52v40c0 8.8 23.3 16 52 16s52-7.2 52-16V52" fill="#0e1626" stroke="#3B82F6" stroke-width="1.6"/>
+            <path d="M68 72c0 8.8 23.3 16 52 16s52-7.2 52-16M68 92c0 8.8 23.3 16 52 16s52-7.2 52-16" stroke="#60A5FA" stroke-width="1.3" opacity=".6"/>
+            <path d="M120 20l4 10 10 1-7.5 6.5 2.5 10-9-5.5-9 5.5 2.5-10L108 31l10-1z" fill="#60A5FA"/>
+          </svg>
+        </div></div>
+      </div>
+
+      <div class="feat reveal">
+        <div class="feat-text">
+          <span class="label">Works while you sleep<span class="line"></span><span class="dot"></span></span>
+          <h3>Scheduled, <span class="grad">unattended</span></h3>
+          <p>Schedule jobs in plain language. JARVIS runs unattended and delivers the reports and briefings you asked for.</p>
+        </div>
+        <div class="feat-art"><div class="art">
+          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
+            <path d="M150 40a44 44 0 1 0 40 62 34 34 0 0 1-40-40 44 44 0 0 0 0-22z" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
+            <circle cx="86" cy="112" r="30" fill="#0e1626" stroke="#60A5FA" stroke-width="1.6"/>
+            <path d="M86 96v16l11 7" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/>
+            <g fill="#60A5FA"><circle cx="176" cy="52" r="2"/><circle cx="196" cy="70" r="1.5"/><circle cx="188" cy="40" r="1.5"/></g>
+          </svg>
+        </div></div>
+      </div>
+
+      <div class="feat reveal">
+        <div class="feat-text">
+          <span class="label">Delegates like a team<span class="line"></span><span class="dot"></span></span>
+          <h3>Subagents in <span class="grad">parallel</span></h3>
+          <p>Hand big jobs to isolated subagents that run their own tasks in parallel and report back when they're done.</p>
+        </div>
+        <div class="feat-art"><div class="art">
+          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
+            <g stroke="#3B82F6" stroke-width="1.5" opacity=".5"><path d="M120 46V78M120 78 60 110M120 78 180 110"/></g>
+            <rect x="98" y="26" width="44" height="30" rx="8" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
+            <text x="120" y="46" fill="#60A5FA" font-family="Inter,sans-serif" font-size="12" font-weight="800" text-anchor="middle">JV</text>
+            <g fill="#0e1626" stroke="#60A5FA" stroke-width="1.5"><rect x="38" y="108" width="44" height="34" rx="8"/><rect x="98" y="108" width="44" height="34" rx="8"/><rect x="158" y="108" width="44" height="34" rx="8"/></g>
+            <g stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round"><path d="M48 120h24M48 128h16M108 120h24M108 128h16M168 120h24M168 128h16"/></g>
+          </svg>
+        </div></div>
+      </div>
+
+      <div class="feat reveal">
+        <div class="feat-text">
+          <span class="label">Sees the web<span class="line"></span><span class="dot"></span></span>
+          <h3>Search, browse, <span class="grad">and see</span></h3>
+          <p>Web search, browser automation, vision, and image generation — JARVIS can look things up, click through pages, and create.</p>
+        </div>
+        <div class="feat-art"><div class="art">
+          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
+            <circle cx="104" cy="82" r="46" fill="#0e1626" stroke="#3B82F6" stroke-width="1.6"/>
+            <path d="M58 82h92M104 36c14 12 14 80 0 92M104 36c-14 12-14 80 0 92M66 58c24 12 52 12 76 0M66 106c24-12 52-12 76 0" stroke="#60A5FA" stroke-width="1.2" opacity=".6"/>
+            <circle cx="150" cy="120" r="20" fill="#111a2e" stroke="#3B82F6" stroke-width="2"/>
+            <path d="M164 134l16 16" stroke="#60A5FA" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div></div>
+      </div>
+
+      <div class="feat reveal">
+        <div class="feat-text">
+          <span class="label">Runs on your machine<span class="line"></span><span class="dot"></span></span>
+          <h3>Your hardware, <span class="grad">your keys</span></h3>
+          <p>JARVIS runs on your machine with your own keys — no accounts, no lock-in. Open source under the hood (MIT).</p>
+        </div>
+        <div class="feat-art"><div class="art">
+          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
+            <rect x="80" y="52" width="80" height="66" rx="8" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
+            <rect x="98" y="70" width="44" height="30" rx="4" fill="#0e1626" stroke="#60A5FA" stroke-width="1.4"/>
+            <g stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"><path d="M96 52V40M120 52V40M144 52V40M96 118v12M120 118v12M144 118v12M80 74H68M80 96H68M160 74h12M160 96h12"/></g>
+            <text x="120" y="92" fill="#60A5FA" font-family="Inter,sans-serif" font-size="12" font-weight="800" text-anchor="middle">MIT</text>
+          </svg>
+        </div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== 4. STATS ===== -->
+  <section class="stats">
+    <div class="wrap">
+      <div class="stat-grid">
+        <div class="stat reveal"><div class="num grad" data-count="3">3</div><div class="lbl">ways to run it</div><div class="sub">Desktop · Terminal · Phone</div></div>
+        <div class="stat reveal"><div class="num grad">24/7</div><div class="lbl">always on</div><div class="sub">Scheduled &amp; unattended</div></div>
+        <div class="stat reveal"><div class="num grad" data-count="100" data-suffix="%">100%</div><div class="lbl">yours</div><div class="sub">Runs on your machine</div></div>
+        <div class="stat reveal"><div class="num grad" data-count="1">1</div><div class="lbl">line to install</div><div class="sub">Open source · MIT</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. AFTER YOU DOWNLOAD ===== -->
   <section class="gs">
     <div class="wrap">
-      <h2>After you download</h2>
-      <div class="gs-box">
+      <div class="section-head reveal" style="margin-bottom:28px">
+        <span class="label">Getting started<span class="line"></span><span class="dot"></span></span>
+        <h2>After you <span class="grad">download</span></h2>
+      </div>
+      <div class="gs-box reveal">
         <p>Run the installer for your platform (one line, above). It sets up everything and creates a <b>JARVIS</b> launch point. On <b>first launch</b>, JARVIS will ask you to:</p>
         <ol>
           <li><b>Connect an AI provider key</b> — paste an API key (e.g. Anthropic) so the agent can think.</li>
@@ -238,8 +468,9 @@
     </div>
   </section>
 
-  <!-- ===== Footer ===== -->
+  <!-- ===== 6. FOOTER ===== -->
   <footer>
+    <a class="verbadge" href="https://github.com/xcerebroai/jarvis-agent/releases/latest"><span class="pip"></span>JARVIS v1.0.0</a>
     <div class="links">
       <a href="https://github.com/xcerebroai/jarvis-agent">GitHub</a>
       <a href="https://github.com/xcerebroai/jarvis-agent#readme">Docs</a>
@@ -250,13 +481,15 @@
 
 <script>
   (function () {
-    // OS detection — feature the matching download; both stay clickable.
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ----- OS detection: feature the matching download + preselect install tab
     function detectOS() {
       var uad = (navigator.userAgentData && navigator.userAgentData.platform) || '';
       var s = (uad + ' ' + (navigator.platform || '') + ' ' + (navigator.userAgent || '')).toLowerCase();
       var touch = navigator.maxTouchPoints || 0;
       if (/iphone|ipod/.test(s)) return 'ios';
-      if (/ipad/.test(s) || (/mac/.test(s) && touch > 1)) return 'ios'; // iPadOS 13+ reports as Mac
+      if (/ipad/.test(s) || (/mac/.test(s) && touch > 1)) return 'ios';
       if (/android/.test(s)) return 'android';
       if (/mac/.test(s)) return 'mac';
       if (/win/.test(s)) return 'win';
@@ -266,28 +499,74 @@
     var mac = document.getElementById('btn-mac');
     var win = document.getElementById('btn-win');
     var detected = document.getElementById('detected');
-    var iMac = document.getElementById('instr-mac');
-    var iWin = document.getElementById('instr-win');
-
-    function feature(el) { el.classList.add('primary'); el.querySelector('[data-rec]').textContent = 'Recommended for you'; }
+    function makePrimary(on, off) { on.classList.add('primary'); on.querySelector('[data-rec]').textContent = 'Recommended for you'; off.classList.remove('primary'); off.querySelector('[data-rec]').textContent = ''; }
 
     if (os === 'mac') {
-      feature(mac); iMac.classList.add('active');
+      makePrimary(mac, win); mac.parentNode.insertBefore(mac, win);
       detected.innerHTML = 'Looks like you’re on <b>macOS</b>.';
-      mac.parentNode.insertBefore(mac, win); // recommended button first
+      var m = document.getElementById('os-mac'); if (m) m.checked = true;
     } else if (os === 'win') {
-      feature(win); iWin.classList.add('active');
+      makePrimary(win, mac);
       detected.innerHTML = 'Looks like you’re on <b>Windows</b>.';
-      win.parentNode.insertBefore(win, mac);
     } else if (os === 'ios' || os === 'android') {
-      // Mobile: can't install here — show both, guide to a computer + phone channels.
-      document.body.classList.add('is-mobile');
-      iMac.classList.add('active'); iWin.classList.add('active');
-      detected.innerHTML = 'JARVIS installs on a <b>Mac</b> or <b>Windows</b> computer.';
+      detected.innerHTML = 'JARVIS installs on a <b>Mac</b> or <b>Windows</b> computer — open this page there. You can still reach it from your phone over Telegram or WhatsApp.';
     } else {
-      // Linux / unknown desktop: no dedicated installer — keep both neutral.
-      iMac.classList.add('active'); iWin.classList.add('active');
       detected.innerHTML = 'JARVIS installs on <b>Mac</b> or <b>Windows</b>.';
+    }
+
+    // ----- Copy-to-clipboard
+    document.querySelectorAll('.copy').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var text = b.getAttribute('data-copy');
+        var done = function () { b.classList.add('copied'); setTimeout(function () { b.classList.remove('copied'); }, 1600); };
+        if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done, done); }
+        else { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); done(); }
+      });
+    });
+    // keyboard toggle for tab labels
+    document.querySelectorAll('.tab').forEach(function (lbl) {
+      lbl.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); var t = document.getElementById(lbl.getAttribute('for')); if (t) t.checked = true; } });
+    });
+
+    // ----- Count-up for stat numbers
+    function countUp(el) {
+      var target = parseFloat(el.getAttribute('data-count'));
+      var suffix = el.getAttribute('data-suffix') || '';
+      if (reduce) { el.textContent = target + suffix; return; }
+      var dur = 1100, start = null;
+      function step(ts) { if (!start) start = ts; var p = Math.min((ts - start) / dur, 1); el.textContent = Math.round(target * p) + suffix; if (p < 1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    }
+
+    // ----- Scroll reveal (stagger children of a revealed group)
+    if (!reduce && 'IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          e.target.classList.add('show');
+          var nums = e.target.querySelectorAll('[data-count]');
+          nums.forEach(function (n) { countUp(n); });
+          obs.unobserve(e.target);
+        });
+      }, { threshold: 0.2 });
+      // stagger: give siblings within a wrap incremental delay
+      document.querySelectorAll('.reveal').forEach(function (el, i) {
+        var sibs = el.parentNode ? el.parentNode.querySelectorAll(':scope > .reveal') : [el];
+        var idx = Array.prototype.indexOf.call(sibs, el);
+        el.style.transitionDelay = (Math.min(idx, 6) * 80) + 'ms';
+        obs.observe(el);
+      });
+    } else {
+      document.querySelectorAll('[data-count]').forEach(function (n) { n.textContent = n.getAttribute('data-count') + (n.getAttribute('data-suffix') || ''); });
+    }
+
+    // ----- Subtle parallax drift on hero glows
+    if (!reduce) {
+      var glows = document.getElementById('glows'); var ticking = false;
+      window.addEventListener('scroll', function () {
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(function () { if (glows) glows.style.transform = 'translateY(' + (window.pageYOffset * 0.12) + 'px)'; ticking = false; });
+      }, { passive: true });
     }
 
     document.getElementById('yr').textContent = new Date().getFullYear();
