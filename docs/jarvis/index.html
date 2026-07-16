@@ -50,10 +50,10 @@
     background-size:66px 66px;
     -webkit-mask-image:radial-gradient(130% 90% at 50% 0%, #000 35%, transparent 82%);
     mask-image:radial-gradient(130% 90% at 50% 0%, #000 35%, transparent 82%)}
-  /* two large ambient glows (electric upper-left, deeper blue upper-right) */
+  /* two corner accents — tight and faint; the page ground stays true black */
   body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none;
-    background:radial-gradient(46% 40% at 14% 6%, rgba(59,130,246,.10), transparent 62%),
-      radial-gradient(44% 38% at 86% 4%, rgba(29,78,216,.09), transparent 62%)}
+    background:radial-gradient(26% 22% at 12% 4%, rgba(59,130,246,.05), transparent 48%),
+      radial-gradient(24% 20% at 88% 3%, rgba(29,78,216,.04), transparent 48%)}
 
   a{color:var(--light); text-decoration:none}
   a:hover{text-decoration:underline}
@@ -89,22 +89,23 @@
   /* ---------- HERO ---------- */
   .hero{min-height:100svh; display:grid; place-items:center; text-align:center; padding:96px 24px 64px; position:relative; overflow:hidden}
   .glows{position:absolute; inset:0; z-index:0; pointer-events:none; will-change:transform}
-  .glow{position:absolute; border-radius:50%; left:50%; top:40%; transform:translate(-50%,-50%); filter:blur(34px)}
-  /* slow ambient breathing — the system idling under the page */
-  .glow.g1{width:min(760px,92vw); height:min(760px,92vw);
-    background:radial-gradient(circle, rgba(59,130,246,.22), rgba(59,130,246,.055) 46%, transparent 68%); animation:breathe 9s ease-in-out infinite}
-  .glow.g2{width:min(440px,62vw); height:min(440px,62vw); top:34%; left:38%;
-    background:radial-gradient(circle, rgba(96,165,250,.19), transparent 62%); animation:breathe 8s ease-in-out infinite 1.2s}
-  .glow.g3{width:min(520px,66vw); height:min(520px,66vw); top:36%; left:64%;
-    background:radial-gradient(circle, rgba(29,78,216,.17), transparent 62%); animation:breathe 10s ease-in-out infinite .5s}
-  @keyframes breathe{0%,100%{opacity:.55; transform:translate(-50%,-50%) scale(1)} 50%{opacity:.8; transform:translate(-50%,-50%) scale(1.055)}}
+  .glow{position:absolute; border-radius:50%; left:50%; top:40%; transform:translate(-50%,-50%); filter:blur(24px)}
+  /* Ambient light discipline: SATURATED electric blue (#3B82F6) only, never
+     pale/white. Halos are small, tight, 6-10% effective opacity, anchored to
+     an element, and fall to true black fast — most of the viewport stays
+     pure #0A0A0A. Light is the exception, not the atmosphere. */
+  .glow.g1{width:min(380px,54vw); height:min(380px,54vw); top:31%;
+    background:radial-gradient(circle, rgba(59,130,246,.15), transparent 56%); animation:breathe 9s ease-in-out infinite}
+  .glow.g2{width:min(280px,42vw); height:min(280px,42vw); top:56%;
+    background:radial-gradient(circle, rgba(59,130,246,.11), transparent 56%); animation:breathe 8s ease-in-out infinite 1.2s}
+  @keyframes breathe{0%,100%{opacity:.5; transform:translate(-50%,-50%) scale(1)} 50%{opacity:.68; transform:translate(-50%,-50%) scale(1.03)}}
   /* radar sweep — one thin conic wedge, barely there */
   .sweep{position:absolute; left:50%; top:40%; width:min(720px,90vw); height:min(720px,90vw);
     margin:calc(min(720px,90vw)/-2) 0 0 calc(min(720px,90vw)/-2); border-radius:50%; pointer-events:none;
-    background:conic-gradient(from 0deg, transparent 0deg 336deg, rgba(96,165,250,.07) 352deg, transparent 360deg)}
+    background:conic-gradient(from 0deg, transparent 0deg 340deg, rgba(59,130,246,.06) 353deg, transparent 360deg)}
   /* cursor-proximity glow (JS positions it; hidden on touch / reduced motion) */
-  #cur{position:absolute; left:0; top:0; width:360px; height:360px; border-radius:50%; z-index:0;
-    background:radial-gradient(circle, rgba(96,165,250,.09), transparent 64%);
+  #cur{position:absolute; left:0; top:0; width:260px; height:260px; border-radius:50%; z-index:0;
+    background:radial-gradient(circle, rgba(59,130,246,.07), transparent 58%);
     opacity:0; transition:opacity .5s ease; pointer-events:none; will-change:transform}
 
   /* min-width:0 + width:100%: .inner is a grid item, so min-width:auto would
@@ -128,13 +129,13 @@
      Hierarchy: the wordmark line (.l1) is the ONE pure-white, full-weight
      element; .l2 steps down a notch in size, weight, and brightness so it
      reads as the supporting line (the gradient "24/7." still carries it). */
-  .h-title .l1{color:#fff; filter:drop-shadow(0 0 18px rgba(59,130,246,.14))}
+  .h-title .l1{color:#fff; filter:drop-shadow(0 0 7px rgba(59,130,246,.22))}
   .h-title .l2{font-size:.68em; font-weight:600; color:#CBD5E1; margin-top:.22em;
-    letter-spacing:.01em; filter:drop-shadow(0 0 14px rgba(59,130,246,.10))}
+    letter-spacing:.01em; filter:drop-shadow(0 0 5px rgba(59,130,246,.14))}
   /* wordmark: chamfered corner clips the J (echoes the ◆ mark); the I is a
      soft glint — near-white with a blue underglow, not a saturated block */
   .wm{display:inline-block; clip-path:polygon(0 .3em, .22em 0, 100% 0, 100% 100%, 0 100%)}
-  .wm .i{color:#CFE0FF; text-shadow:0 0 14px rgba(59,130,246,.6), 0 2px 22px rgba(59,130,246,.35)}
+  .wm .i{color:#CFE0FF; text-shadow:0 0 7px rgba(59,130,246,.65), 0 1px 11px rgba(59,130,246,.3)}
   .subtag{margin:20px auto 0; max-width:640px; color:var(--muted); font-size:clamp(1rem,2.4vw,1.15rem)}
 
   .downloads{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:34px}
@@ -440,7 +441,7 @@
 
   <!-- ===== 1. HERO ===== -->
   <section class="hero">
-    <div class="glows" id="glows" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span><span class="sweep"></span></div>
+    <div class="glows" id="glows" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="sweep"></span></div>
     <div id="cur" aria-hidden="true"></div>
     <div class="inner">
       <div class="pills">
