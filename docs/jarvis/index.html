@@ -21,8 +21,14 @@
 <meta name="twitter:image" content="https://xcerebro.ai/jarvis/og.png" />
 <link rel="canonical" href="https://xcerebro.ai/jarvis/" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0A0A'/%3E%3Cpath d='M16 7l6 9-6 9-6-9z' fill='%233B82F6'/%3E%3C/svg%3E" />
-<script>document.documentElement.className='';</script>
+<link rel="preload" href="chakra-petch-700.woff2" as="font" type="font/woff2" crossorigin />
+<script>document.documentElement.className='js';</script>
 <style>
+  /* Display face — Chakra Petch 700, self-hosted, single subset woff2.
+     Squared, chamfered HUD lettering: the JARVIS voice. Body stays Inter. */
+  @font-face{font-family:'Chakra Petch'; font-style:normal; font-weight:700; font-display:swap;
+    src:url('chakra-petch-700.woff2') format('woff2')}
+
   :root{
     --black:#0A0A0A; --midnight:#0F172A; --panel:#111a2e;
     --electric:#3B82F6; --light:#60A5FA;
@@ -30,6 +36,7 @@
     --glow:rgba(59,130,246,.45);
     --grad:linear-gradient(120deg,#60A5FA,#3B82F6);
     --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --display:'Chakra Petch',var(--font);
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -53,6 +60,7 @@
   a:focus-visible,.btn:focus-visible,.tab:focus-visible,.copy:focus-visible,button:focus-visible{
     outline:2px solid var(--light); outline-offset:3px; border-radius:6px}
   .wrap{max-width:1100px; margin:0 auto; padding:0 24px}
+  /* the ONE gradient headline on the page lives in the hero */
   .grad{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
 
   /* section label: TEXT ——• */
@@ -60,53 +68,84 @@
     font-size:.74rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase}
   .label .line{width:42px; height:1px; background:linear-gradient(90deg, transparent, var(--electric))}
   .label .dot{width:6px; height:6px; border-radius:50%; background:var(--light); box-shadow:0 0 9px var(--light)}
-  .section-head{text-align:center; max-width:660px; margin:0 auto 46px}
-  .section-head .label{justify-content:center; margin-bottom:16px}
-  h2{font-weight:800; font-size:clamp(1.7rem,4.6vw,2.5rem); letter-spacing:-.015em; line-height:1.14}
-  .section-head p{color:var(--muted); margin-top:14px; font-size:1.05rem}
+  .section-head{text-align:center; max-width:660px; margin:0 auto 34px}
+  .section-head .label{justify-content:center; margin-bottom:14px}
+  h2{font-family:var(--display); font-weight:700; color:#fff; text-wrap:balance;
+    font-size:clamp(1.6rem,4.2vw,2.3rem); letter-spacing:.005em; line-height:1.16}
+  .section-head p{color:var(--muted); margin-top:12px; font-size:1.02rem}
+
+  /* HUD corner ticks — precise interface detailing on the card surfaces */
+  .hud{position:relative}
+  .hud::before,.hud::after{content:""; position:absolute; width:13px; height:13px; pointer-events:none;
+    opacity:.45; transition:opacity .3s}
+  .hud::before{top:-1px; left:-1px; border-top:1.5px solid var(--electric); border-left:1.5px solid var(--electric); border-top-left-radius:3px}
+  .hud::after{bottom:-1px; right:-1px; border-bottom:1.5px solid var(--electric); border-right:1.5px solid var(--electric); border-bottom-right-radius:3px}
+  .hud:hover::before,.hud:hover::after{opacity:1}
 
   /* reveal-on-scroll (JS opts in; no-JS + reduced-motion = visible) */
   html:not(.nojs) .reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1)}
   html:not(.nojs) .reveal.show{opacity:1; transform:none}
 
   /* ---------- HERO ---------- */
-  .hero{min-height:100svh; display:grid; place-items:center; text-align:center; padding:96px 24px 72px; position:relative; overflow:hidden}
+  .hero{min-height:100svh; display:grid; place-items:center; text-align:center; padding:96px 24px 64px; position:relative; overflow:hidden}
   .glows{position:absolute; inset:0; z-index:0; pointer-events:none; will-change:transform}
   .glow{position:absolute; border-radius:50%; left:50%; top:40%; transform:translate(-50%,-50%); filter:blur(34px)}
+  /* slow ambient breathing — the system idling under the page */
   .glow.g1{width:min(760px,92vw); height:min(760px,92vw);
-    background:radial-gradient(circle, rgba(59,130,246,.36), rgba(59,130,246,.09) 46%, transparent 68%); animation:pulse 7s ease-in-out infinite}
+    background:radial-gradient(circle, rgba(59,130,246,.36), rgba(59,130,246,.09) 46%, transparent 68%); animation:breathe 9s ease-in-out infinite}
   .glow.g2{width:min(440px,62vw); height:min(440px,62vw); top:34%; left:38%;
-    background:radial-gradient(circle, rgba(96,165,250,.32), transparent 62%); animation:pulse 5.5s ease-in-out infinite .8s}
+    background:radial-gradient(circle, rgba(96,165,250,.32), transparent 62%); animation:breathe 8s ease-in-out infinite 1.2s}
   .glow.g3{width:min(520px,66vw); height:min(520px,66vw); top:36%; left:64%;
-    background:radial-gradient(circle, rgba(29,78,216,.28), transparent 62%); animation:pulse 8s ease-in-out infinite .3s}
-  @keyframes pulse{0%,100%{opacity:.7; transform:translate(-50%,-50%) scale(1)} 50%{opacity:1; transform:translate(-50%,-50%) scale(1.08)}}
+    background:radial-gradient(circle, rgba(29,78,216,.28), transparent 62%); animation:breathe 10s ease-in-out infinite .5s}
+  @keyframes breathe{0%,100%{opacity:.68; transform:translate(-50%,-50%) scale(1)} 50%{opacity:.95; transform:translate(-50%,-50%) scale(1.055)}}
+  /* radar sweep — one thin conic wedge, barely there */
+  .sweep{position:absolute; left:50%; top:40%; width:min(720px,90vw); height:min(720px,90vw);
+    margin:calc(min(720px,90vw)/-2) 0 0 calc(min(720px,90vw)/-2); border-radius:50%; pointer-events:none;
+    background:conic-gradient(from 0deg, transparent 0deg 336deg, rgba(96,165,250,.10) 352deg, transparent 360deg)}
+  /* cursor-proximity glow (JS positions it; hidden on touch / reduced motion) */
+  #cur{position:absolute; left:0; top:0; width:360px; height:360px; border-radius:50%; z-index:0;
+    background:radial-gradient(circle, rgba(96,165,250,.09), transparent 64%);
+    opacity:0; transition:opacity .5s ease; pointer-events:none; will-change:transform}
+
   .hero .inner{position:relative; z-index:1; max-width:820px}
+  .pills{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
   .pill{display:inline-flex; align-items:center; gap:9px; padding:7px 16px; border-radius:999px;
     border:1px solid rgba(59,130,246,.42); background:rgba(59,130,246,.07); color:var(--light);
     font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; box-shadow:0 0 22px rgba(59,130,246,.16)}
   .pill .d{width:7px; height:7px; border-radius:50%; background:var(--light); box-shadow:0 0 9px var(--light)}
-  .h-title{font-weight:800; font-size:clamp(2.7rem,8vw,5rem); line-height:1.04; letter-spacing:-.02em; margin-top:24px}
-  .h-title span{display:block}
+  .pill.sys{font-family:var(--mono); letter-spacing:.2em; padding:7px 13px}
+  .pill.sys .d{background:#28c840; box-shadow:0 0 9px #28c840}
+
+  .h-title{font-family:var(--display); font-weight:700; font-size:clamp(2.6rem,7.6vw,4.7rem);
+    line-height:1.06; letter-spacing:.005em; margin-top:24px}
+  .h-title > span{display:block}
   .h-title .l1{color:#fff; filter:drop-shadow(0 0 22px rgba(59,130,246,.28))}
   .h-title .l2{filter:drop-shadow(0 0 30px rgba(59,130,246,.4))}
-  .subtag{margin:22px auto 0; max-width:640px; color:var(--muted); font-size:clamp(1rem,2.4vw,1.15rem)}
+  /* wordmark: chamfered corner clips the J (echoes the ◆ mark); the I is the
+     power indicator — lit electric, like the system's on-light */
+  .wm{display:inline-block; clip-path:polygon(0 .3em, .22em 0, 100% 0, 100% 100%, 0 100%)}
+  .wm .i{color:var(--electric); text-shadow:0 0 20px rgba(59,130,246,.95)}
+  .subtag{margin:20px auto 0; max-width:640px; color:var(--muted); font-size:clamp(1rem,2.4vw,1.15rem)}
 
-  .downloads{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:38px}
+  .downloads{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:34px}
   .btn{display:inline-flex; align-items:center; gap:10px; padding:15px 28px; border-radius:12px;
-    font-weight:700; font-size:1.05rem; cursor:pointer; white-space:nowrap;
+    font-weight:700; font-size:1.05rem; cursor:pointer; white-space:nowrap; position:relative;
     transition:transform .14s ease, box-shadow .25s ease, background .25s, color .2s, border-color .2s;
     border:1.5px solid rgba(59,130,246,.5); background:rgba(59,130,246,.05); color:var(--light)}
   .btn svg{width:22px; height:22px; flex:0 0 auto}
   .btn:hover{transform:translateY(-2px); color:#fff; text-decoration:none; border-color:var(--electric); box-shadow:0 10px 40px var(--glow)}
   .btn.primary{background:var(--grad); color:#fff; border-color:transparent; box-shadow:0 8px 34px var(--glow)}
   .btn.primary:hover{box-shadow:0 14px 52px rgba(59,130,246,.7)}
+  /* featured button carries a faint idle pulse — the eye lands where the power is */
+  .btn.primary .halo{position:absolute; inset:-3px; border-radius:15px; z-index:-1; pointer-events:none;
+    box-shadow:0 0 38px 8px rgba(59,130,246,.5); opacity:.28}
   .btn .rec{font-size:.7rem; font-weight:600; opacity:.85; margin-left:2px}
   .btn .rec:empty{display:none}
   .detected{margin-top:16px; color:var(--dim); font-size:.9rem; min-height:1.2em}
   .detected b{color:var(--light); font-weight:600}
 
   /* inline install under hero */
-  .hero-install{margin-top:30px; width:100%; max-width:620px; margin-left:auto; margin-right:auto}
+  .hero-install{margin-top:28px; width:100%; max-width:620px; margin-left:auto; margin-right:auto}
   .tabs{position:relative}
   .tabs input{position:absolute; opacity:0; pointer-events:none}
   .tablist{display:flex; gap:8px; justify-content:center; margin-bottom:14px; flex-wrap:wrap}
@@ -123,7 +162,12 @@
   .cmdbar{display:flex; align-items:center; gap:12px; text-align:left; background:var(--midnight);
     border:1px solid rgba(59,130,246,.28); border-radius:12px; padding:13px 15px; box-shadow:0 0 40px rgba(59,130,246,.1)}
   .cmdbar .prompt{color:var(--electric); font-family:var(--mono); user-select:none}
-  .cmdbar code{font-family:var(--mono); font-size:.88rem; color:var(--light); overflow-x:auto; white-space:nowrap; flex:1}
+  /* overflow scrolls but shows no scrollbar; right edge fades instead */
+  .cmdbar code{font-family:var(--mono); font-size:.88rem; color:var(--light); overflow-x:auto; white-space:nowrap; flex:1;
+    scrollbar-width:none; -ms-overflow-style:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);
+    mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
+  .cmdbar code::-webkit-scrollbar{display:none}
   .copy{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-family:var(--font);
     background:rgba(59,130,246,.12); color:var(--light); border:1px solid rgba(59,130,246,.4);
     border-radius:8px; padding:7px 12px; font-size:.8rem; font-weight:600; transition:background .2s, color .2s}
@@ -136,7 +180,7 @@
   .install-note{color:var(--dim); font-size:.85rem; margin-top:12px; text-align:center}
 
   /* ---------- PRODUCT SHOT ---------- */
-  .product{padding:96px 0}
+  .product{padding:64px 0 48px}
   .mock-wrap{max-width:940px; margin:0 auto; position:relative}
   .mock-wrap::before{content:""; position:absolute; inset:4% 8% -10% 8%; z-index:0;
     background:radial-gradient(60% 60% at 50% 40%, var(--glow), transparent 70%); filter:blur(46px)}
@@ -150,7 +194,8 @@
   .mock .addr .lock{width:9px; height:9px; border-radius:2px; border:1.5px solid var(--dim)}
   .mock .body{display:grid; grid-template-columns:196px 1fr; min-height:380px}
   .mock .side{border-right:1px solid var(--border); padding:16px 12px; background:#0b1220}
-  .mock .side .brand{font-weight:800; letter-spacing:.14em; font-size:.85rem; margin:4px 8px 16px}
+  .mock .side .brand{font-family:var(--display); font-weight:700; color:#fff; letter-spacing:.14em; font-size:.85rem; margin:4px 8px 16px}
+  .mock .side .brand .i{color:var(--electric)}
   .mock .side .nav{display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; color:var(--muted); font-size:.85rem; margin-bottom:4px}
   .mock .side .nav.active{background:rgba(59,130,246,.14); color:#fff}
   .mock .side .nav svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.7}
@@ -158,52 +203,117 @@
   .mock .side .row{height:8px; border-radius:4px; background:#152036; margin:8px 6px}
   .mock .side .row.s{width:70%}.mock .side .row.m{width:85%}
   .mock .main{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; gap:16px}
-  .mock .splash{font-weight:800; font-size:clamp(2rem,6vw,3.4rem); letter-spacing:.08em; filter:drop-shadow(0 0 22px var(--glow))}
+  .mock .splash{font-family:var(--display); font-weight:700; color:#fff; font-size:clamp(2rem,6vw,3.2rem); letter-spacing:.08em; filter:drop-shadow(0 0 22px var(--glow))}
+  .mock .splash .i{color:var(--electric); text-shadow:0 0 18px rgba(59,130,246,.9)}
   .mock .splash-sub{color:var(--dim); font-size:.9rem; margin-top:-6px}
   .mock .inputbar{width:min(520px,92%); display:flex; align-items:center; gap:10px; background:#0c1424;
     border:1px solid #26344e; border-radius:12px; padding:12px 14px; box-shadow:0 0 30px rgba(59,130,246,.12)}
   .mock .inputbar .ph{color:var(--dim); font-size:.9rem; flex:1; text-align:left}
   .mock .inputbar .send{width:30px; height:30px; border-radius:8px; background:var(--electric); display:grid; place-items:center; flex:0 0 auto}
   .mock .inputbar .send svg{width:16px; height:16px; fill:#fff}
-  .mock .badge{position:absolute; top:14px; right:16px; font-size:.72rem; color:var(--light); border:1px solid rgba(59,130,246,.4); border-radius:20px; padding:3px 10px; background:rgba(59,130,246,.08)}
+  .hudtag{position:absolute; top:14px; right:16px; display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; color:var(--light);
+    border:1px solid rgba(59,130,246,.4); border-radius:20px; padding:4px 11px; background:rgba(59,130,246,.08)}
+  .hudtag .hdot{width:6px; height:6px; border-radius:50%; background:#28c840; box-shadow:0 0 8px #28c840}
 
   /* ---------- FEATURES ---------- */
-  .features{padding:40px 0 60px}
-  .feat{display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:center; padding:46px 0}
-  .feat:nth-child(even) .feat-art{order:2}
-  .feat .label{margin-bottom:14px}
-  .feat h3{font-weight:800; font-size:clamp(1.4rem,3vw,1.85rem); margin:0 0 12px; letter-spacing:-.015em; line-height:1.15}
-  .feat p{color:var(--muted); font-size:1.06rem; max-width:470px}
+  .features{padding:20px 0 36px}
+  .feat{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; padding:34px 0}
+  /* true alternation: even rows carry the vignette on the LEFT (the upstream
+     order:2 was a no-op — art already sat right on every row) */
+  .feat:nth-child(even) .feat-art{order:-1}
+  .feat .label{margin-bottom:12px}
+  .feat h3{font-family:var(--display); font-weight:700; color:#fff; font-size:clamp(1.35rem,2.8vw,1.7rem); margin:0 0 10px; letter-spacing:.005em; line-height:1.18; text-wrap:balance}
+  .feat p{color:var(--muted); font-size:1.04rem; max-width:470px}
   .feat-art{display:flex; justify-content:center}
-  .art{width:100%; max-width:380px; aspect-ratio:16/11; border:1px solid var(--border); border-radius:16px;
-    background:linear-gradient(180deg,#0e1626,#0b1120); display:grid; place-items:center; padding:22px;
+
+  /* fake-UI vignettes — each card is a small live fragment of the product */
+  .art{width:100%; max-width:390px; aspect-ratio:16/10; border:1px solid var(--border); border-radius:16px;
+    background:linear-gradient(180deg,#0e1626,#0b1120); padding:16px 16px 14px; overflow:hidden;
+    display:flex; flex-direction:column; gap:8px; text-align:left;
     box-shadow:0 0 46px rgba(59,130,246,.08); transition:border-color .25s, box-shadow .25s, transform .25s}
-  .feat:hover .art{border-color:rgba(59,130,246,.5); box-shadow:0 0 66px rgba(59,130,246,.18); transform:translateY(-3px)}
-  .art svg{width:100%; height:100%}
+  .feat:hover .art{border-color:rgba(59,130,246,.55); box-shadow:0 0 66px rgba(59,130,246,.2); transform:translateY(-3px)}
+  .vhead{display:flex; align-items:baseline; gap:8px; font-size:.66rem; font-weight:600; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--light); margin-bottom:2px}
+  .vhead .vsub{color:var(--dim); letter-spacing:.06em; font-weight:500; text-transform:none; font-size:.72rem;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .vfoot{display:flex; align-items:center; gap:7px; margin-top:auto; color:var(--dim); font-size:.72rem}
+  .vfoot .vdot{width:5px; height:5px; border-radius:50%; background:var(--light); box-shadow:0 0 7px var(--light); flex:0 0 auto}
+
+  .msg{max-width:84%; padding:8px 12px; border-radius:11px; font-size:.8rem; line-height:1.45}
+  .msg.them{align-self:flex-start; background:#152036; color:var(--text); border-bottom-left-radius:4px}
+  .msg.me{align-self:flex-end; background:rgba(59,130,246,.16); border:1px solid rgba(59,130,246,.35); color:#dbe7ff; border-bottom-right-radius:4px}
+  .msg .mark{color:var(--light)}
+
+  .mrow{display:flex; justify-content:space-between; gap:10px; align-items:center; padding:7px 10px; border-radius:9px;
+    background:#101a2d; border:1px solid #1b2740; font-size:.78rem}
+  .mrow .mkey{color:var(--text); font-family:var(--mono); font-size:.75rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .mrow .mval{color:var(--dim); flex:0 0 auto; font-size:.72rem}
+  .vchip{align-self:flex-start; margin-top:auto; font-size:.72rem; color:#7ee0a3; background:rgba(40,200,64,.08);
+    border:1px solid rgba(40,200,64,.35); border-radius:20px; padding:3px 11px}
+
+  .srow{display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:9px; background:#101a2d;
+    border:1px solid #1b2740; font-size:.78rem}
+  .srow.dim2{opacity:.55}
+  .srow .stime{font-family:var(--mono); color:var(--light); font-size:.74rem; flex:0 0 auto; min-width:44px}
+  .srow .sname{color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .srow .st{margin-left:auto; flex:0 0 auto; position:relative; font-family:var(--mono); font-size:.66rem; letter-spacing:.1em}
+  .srow .st .run{color:var(--light)}
+  .srow .st .ok{color:#7ee0a3; position:absolute; right:0; top:0; white-space:nowrap}
+  .srow .snext{margin-left:auto; color:var(--dim); font-family:var(--mono); font-size:.66rem; letter-spacing:.1em}
+  /* resting/final state: DONE shown, RUNNING hidden (animation reverses this briefly) */
+  .srow .st .run{opacity:0}
+  .srow .st .ok{opacity:1}
+
+  .arow{display:flex; align-items:center; gap:10px; font-size:.76rem}
+  .arow .aname{color:var(--text); font-family:var(--mono); font-size:.72rem; flex:0 0 44%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .arow .bar{flex:1; height:5px; border-radius:3px; background:#152036; overflow:hidden}
+  .arow .bar i{display:block; height:100%; border-radius:3px; background:var(--grad);
+    transform:scaleX(var(--w,1)); transform-origin:left}
+  .arow .apct{flex:0 0 34px; text-align:right; color:var(--dim); font-family:var(--mono); font-size:.68rem}
+  .arow .apct.okc{color:#7ee0a3}
+
+  .bline{height:8px; border-radius:4px; background:#152036}
+  .bline.b1{width:88%}.bline.b2{width:64%}.bline.b3{width:76%}
+  .wfind{display:flex; align-items:baseline; gap:8px; padding:8px 11px; border-radius:9px; font-size:.78rem;
+    background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.4); color:#dbe7ff}
+  .wfind .wsub{color:var(--dim); font-size:.7rem; flex:0 0 auto}
+  .vbrowser{display:flex; align-items:center; gap:6px; margin-bottom:2px}
+  .vbrowser .bdot{width:7px; height:7px; border-radius:50%; background:#22304a}
+  .vbrowser .baddr{flex:1; margin-left:6px; font-family:var(--mono); font-size:.68rem; color:var(--dim);
+    background:#0a1120; border:1px solid #1b2740; border-radius:6px; padding:4px 9px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+  .tline{font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; gap:8px; align-items:baseline}
+  .tline .tp{color:var(--electric); user-select:none}
+  .tline.okl{color:var(--text)}
+  .tline.okl b{color:#7ee0a3; font-weight:600}
+  .tline .tdot{color:#28c840; text-shadow:0 0 8px rgba(40,200,64,.8)}
 
   /* ---------- STATS ---------- */
-  .stats{padding:80px 0}
-  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
-  .stat{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center;
-    transition:border-color .25s, box-shadow .25s}
-  .stat:hover{border-color:rgba(59,130,246,.5); box-shadow:0 0 44px rgba(59,130,246,.14)}
-  .stat .num{font-weight:800; font-size:clamp(2.2rem,5vw,3rem); line-height:1; letter-spacing:-.02em}
-  .stat .lbl{color:var(--text); font-weight:600; margin-top:10px; font-size:.98rem}
-  .stat .sub{color:var(--dim); font-size:.82rem; margin-top:4px}
+  .stats{padding:48px 0}
+  .stat-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px}
+  .stat{min-width:0; background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:24px 14px; text-align:center;
+    transition:border-color .25s, box-shadow .25s, transform .25s}
+  .stat:hover{border-color:rgba(59,130,246,.55); box-shadow:0 0 44px rgba(59,130,246,.16); transform:translateY(-2px)}
+  .stat .num{font-family:var(--display); font-weight:700; color:#fff; font-size:clamp(1.9rem,4vw,2.6rem); line-height:1;
+    letter-spacing:.01em; filter:drop-shadow(0 0 16px rgba(59,130,246,.35)); font-variant-numeric:tabular-nums}
+  .stat .lbl{color:var(--text); font-weight:600; margin-top:10px; font-size:.95rem}
+  .stat .sub{color:var(--dim); font-size:.8rem; margin-top:4px}
 
   /* ---------- AFTER DOWNLOAD ---------- */
-  .gs{padding:88px 0; position:relative}
+  .gs{padding:56px 0 64px; position:relative}
   .gs::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
     background:radial-gradient(60% 50% at 50% 40%, rgba(59,130,246,.07), transparent 70%)}
   .gs-box{max-width:720px; margin:0 auto; background:var(--panel); border:1px solid rgba(59,130,246,.28); border-radius:16px;
-    padding:30px 32px; box-shadow:0 0 50px rgba(59,130,246,.1)}
+    padding:28px 32px; box-shadow:0 0 50px rgba(59,130,246,.1)}
   .gs-box ol{margin:14px 0 0 20px; color:var(--muted)}
   .gs-box li{margin:8px 0}
   .gs-box li b{color:var(--text); font-weight:600}
   .gs-box p code{background:rgba(59,130,246,.12); color:var(--light); padding:1px 6px; border-radius:5px; font-size:.9em}
 
   /* ---------- FOOTER ---------- */
-  footer{padding:56px 24px 64px; text-align:center; color:var(--dim); font-size:.9rem; border-top:1px solid var(--border)}
+  footer{padding:48px 24px 56px; text-align:center; color:var(--dim); font-size:.9rem; border-top:1px solid var(--border)}
   .verbadge{display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(59,130,246,.42);
     background:rgba(59,130,246,.08); color:var(--light); border-radius:20px; padding:6px 16px; font-weight:600; font-size:.85rem; margin-bottom:22px}
   .verbadge:hover{text-decoration:none; box-shadow:0 0 24px var(--glow)}
@@ -211,30 +321,85 @@
   footer .links{margin-bottom:14px}
   footer .links a{margin:0 10px}
 
+  /* ---------- MOTION (opt-in only: JS on + no reduced-motion preference) ----------
+     Everything below is transform/opacity (plus two one-shot small-area glow
+     blooms). Resting CSS above IS the final state, so no-JS and reduced-motion
+     users see the complete page with zero dependency on any of this. */
+  @media (prefers-reduced-motion: no-preference){
+    /* boot: the system comes online — once, fast, never loops */
+    html.js .hero .inner > *{opacity:0; animation:bootIn .65s cubic-bezier(.2,.7,.2,1) forwards}
+    html.js .hero .inner > *:nth-child(1){animation-delay:.05s}
+    html.js .hero .inner > *:nth-child(2){animation-delay:.18s}
+    html.js .hero .inner > *:nth-child(3){animation-delay:.34s}
+    html.js .hero .inner > *:nth-child(4){animation-delay:.48s}
+    html.js .hero .inner > *:nth-child(5){animation-delay:.60s}
+    html.js .hero .inner > *:nth-child(6){animation-delay:.70s}
+    @keyframes bootIn{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+    html.js .glows{opacity:0; animation:glowIgnite 1.5s ease-out .1s forwards}
+    @keyframes glowIgnite{from{opacity:0} to{opacity:1}}
+    .sweep{animation:sweep 16s linear infinite 1.6s}
+    @keyframes sweep{from{transform:rotate(0)} to{transform:rotate(360deg)}}
+    .btn.primary .halo{animation:halo 3.4s ease-in-out infinite 1.4s}
+    @keyframes halo{0%,100%{opacity:.22} 50%{opacity:.6}}
+
+    /* ignite as sections power on (one brief bloom, then settle) */
+    html.js .reveal.show .art, html.js .stat.reveal.show, html.js .gs-box.ignite{animation:ignite .9s ease-out .1s}
+    @keyframes ignite{0%{box-shadow:0 0 0 rgba(59,130,246,0)} 45%{box-shadow:0 0 52px rgba(59,130,246,.3)} 100%{box-shadow:0 0 46px rgba(59,130,246,.08)}}
+
+    /* vignette moments — each card animates ONCE when revealed */
+    html.js .feat .msg, html.js .feat .mrow, html.js .feat .vchip, html.js .feat .srow,
+    html.js .feat .wfind, html.js .feat .tline{opacity:0}
+    html.js .feat.show .msg, html.js .feat.show .mrow, html.js .feat.show .vchip, html.js .feat.show .srow,
+    html.js .feat.show .wfind, html.js .feat.show .tline{animation:vIn .5s cubic-bezier(.2,.7,.2,1) forwards}
+    html.js .feat.show :is(.msg,.mrow,.srow,.tline):nth-of-type(2){animation-delay:.5s}
+    html.js .feat.show :is(.msg,.mrow,.srow,.tline):nth-of-type(3){animation-delay:.95s}
+    html.js .feat.show :is(.msg,.mrow,.srow,.tline):nth-of-type(4){animation-delay:1.35s}
+    html.js .feat.show .vchip{animation-delay:1.5s}
+    html.js .feat.show .wfind{animation-delay:1.1s}
+    @keyframes vIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+    /* schedule row: RUNNING flips to ✓ DONE */
+    html.js .feat.show .st .run{animation:runShow 2.4s steps(1) forwards .6s}
+    html.js .feat.show .st .ok{opacity:0; animation:vIn .4s ease forwards 3s}
+    @keyframes runShow{0%{opacity:1} 100%{opacity:0}}
+    /* subagent bars fill to their targets */
+    html.js .feat .arow .bar i{transform:scaleX(0)}
+    html.js .feat.show .arow .bar i{animation:fill 1.1s cubic-bezier(.2,.7,.2,1) forwards}
+    html.js .feat.show .arow:nth-of-type(2) .bar i{animation-delay:.25s}
+    html.js .feat.show .arow:nth-of-type(3) .bar i{animation-delay:.45s}
+    @keyframes fill{from{transform:scaleX(0)} to{transform:scaleX(var(--w,1))}}
+    /* browser scan sweep */
+    .v-web{position:relative}
+    .v-web .vscan{content:""; position:absolute; top:0; bottom:0; left:-40%; width:34%; pointer-events:none;
+      background:linear-gradient(100deg, transparent, rgba(96,165,250,.07) 45%, rgba(96,165,250,.12) 50%, rgba(96,165,250,.07) 55%, transparent); opacity:0}
+    html.js .feat.show .v-web .vscan{animation:vscan 1.4s ease-in-out .4s forwards}
+    @keyframes vscan{0%{opacity:1; transform:translateX(0)} 100%{opacity:0; transform:translateX(440%)}}
+  }
+
   /* ---------- Responsive ---------- */
   @media (max-width:860px){
-    .feat{grid-template-columns:1fr; gap:24px; padding:36px 0; text-align:center}
-    .feat:nth-child(even) .feat-art{order:0}
+    .feat{grid-template-columns:1fr; gap:22px; padding:28px 0; text-align:center}
+    .feat:nth-child(even) .feat-art{order:-1}
     .feat .label{justify-content:center}
     .feat p{margin:0 auto}
     .feat-art{order:-1}
-    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .mock .body{grid-template-columns:1fr}
     .mock .side{display:none}
   }
   @media (max-width:560px){
-    .hero{padding:88px 20px 64px}
+    .hero{padding:88px 20px 56px}
     .btn{width:100%; justify-content:center}
     .downloads{flex-direction:column}
     .cmdbar{flex-wrap:wrap}
     .cmdbar code{flex-basis:100%; order:3}
   }
-  @media (max-width:420px){ .stat-grid{grid-template-columns:1fr} }
+  @media (max-width:420px){ .stat-grid{grid-template-columns:minmax(0,1fr)} }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     html:not(.nojs) .reveal{opacity:1 !important; transform:none !important; transition:none}
     *{animation:none !important}
     .glows{transform:none !important}
+    #cur{display:none}
   }
 </style>
 </head>
@@ -242,17 +407,22 @@
 
   <!-- ===== 1. HERO ===== -->
   <section class="hero">
-    <div class="glows" id="glows" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span></div>
+    <div class="glows" id="glows" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span><span class="sweep"></span></div>
+    <div id="cur" aria-hidden="true"></div>
     <div class="inner">
-      <span class="pill"><span class="d"></span>Your AI Employee. On Your Machine.</span>
+      <div class="pills">
+        <span class="pill"><span class="d"></span>Your AI Employee. On Your Machine.</span>
+        <span class="pill sys"><span class="d"></span>ONLINE</span>
+      </div>
       <h1 class="h-title">
-        <span class="l1">Meet JARVIS.</span>
+        <span class="l1">Meet <span class="wm">JARV<span class="i">I</span>S</span>.</span>
         <span class="l2 grad">It Runs Your Business 24/7.</span>
       </h1>
       <p class="subtag">An AI agent that works across your desktop, terminal, and phone — with its own memory, its own skills, and the run of your tools.</p>
 
       <div class="downloads">
         <a class="btn primary" id="btn-win" href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-windows.ps1">
+          <span class="halo" aria-hidden="true"></span>
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 5.1 10.5 4v7.5H3V5.1Zm0 13.8L10.5 20v-7.4H3v6.3Zm8.6 1.2L21 21.4V12.6h-9.4V20.1Zm0-16.2v7.6H21V2.6l-9.4 1.3Z"/></svg>
           <span>Download for Windows</span><span class="rec" data-rec></span>
         </a>
@@ -302,16 +472,16 @@
     <div class="wrap">
       <div class="section-head reveal">
         <span class="label">Desktop app<span class="line"></span><span class="dot"></span></span>
-        <h2>A home base for your <span class="grad">AI employee</span></h2>
+        <h2>A home base for your AI employee</h2>
         <p>Chat, launch tasks, and watch JARVIS work — a native window on Mac and Windows. (Stylized preview; a real screenshot drops in after the smoke test.)</p>
       </div>
       <div class="mock-wrap reveal">
-        <div class="mock" role="img" aria-label="Stylized illustration of the JARVIS desktop application window">
+        <div class="mock hud" role="img" aria-label="Stylized illustration of the JARVIS desktop application window">
           <div class="chrome"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
             <span class="addr"><span class="lock"></span>jarvis · session</span></div>
           <div class="body">
             <aside class="side">
-              <div class="brand grad">JARVIS</div>
+              <div class="brand">JARV<span class="i">I</span>S</div>
               <div class="nav active"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Sessions</div>
               <div class="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9l2 2-2 2"/></svg>Skills &amp; Tools</div>
               <div class="nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H4z"/><path d="M8 20h8"/></svg>Messaging</div>
@@ -320,8 +490,8 @@
               <div class="row m"></div><div class="row s"></div><div class="row m"></div>
             </aside>
             <div class="main">
-              <div class="badge">◆ Gateway ready</div>
-              <div class="splash grad">JARVIS</div>
+              <div class="hudtag"><span class="hdot"></span>GATEWAY READY</div>
+              <div class="splash">JARV<span class="i">I</span>S</div>
               <div class="splash-sub">Ask a question, paste an error, or point me at a repo.</div>
               <div class="inputbar"><span class="ph">Message JARVIS…</span>
                 <span class="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></span></div>
@@ -339,98 +509,93 @@
       <div class="feat reveal">
         <div class="feat-text">
           <span class="label">Lives everywhere<span class="line"></span><span class="dot"></span></span>
-          <h3>One agent, <span class="grad">every surface</span></h3>
+          <h3>One agent, every surface</h3>
           <p>Reach JARVIS from Telegram, WhatsApp, Discord, Slack, your terminal, or the desktop app. One agent, one memory, wherever you work.</p>
         </div>
-        <div class="feat-art"><div class="art">
-          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
-            <g stroke="#3B82F6" stroke-width="1.5" opacity=".5"><path d="M120 82 48 40M120 82 192 40M120 82 40 96M120 82 200 96M120 82 70 138M120 82 170 138"/></g>
-            <rect x="96" y="60" width="48" height="44" rx="10" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
-            <text x="120" y="87" fill="#60A5FA" font-family="Inter,sans-serif" font-size="13" font-weight="800" text-anchor="middle">JV</text>
-            <g fill="#0e1626" stroke="#60A5FA" stroke-width="1.4"><circle cx="48" cy="40" r="13"/><circle cx="192" cy="40" r="13"/><circle cx="40" cy="96" r="13"/><circle cx="200" cy="96" r="13"/><circle cx="70" cy="138" r="13"/><circle cx="170" cy="138" r="13"/></g>
-            <g fill="#60A5FA"><circle cx="48" cy="40" r="3.2"/><circle cx="192" cy="40" r="3.2"/><circle cx="40" cy="96" r="3.2"/><circle cx="200" cy="96" r="3.2"/><circle cx="70" cy="138" r="3.2"/><circle cx="170" cy="138" r="3.2"/></g>
-          </svg>
+        <div class="feat-art"><div class="art hud" aria-hidden="true">
+          <div class="vhead">◆ Channels <span class="vsub">Telegram · WhatsApp · Slack · Terminal</span></div>
+          <div class="msg them">Ship the weekly report before 9am.</div>
+          <div class="msg me">Done — digest sent to #ops, draft invoice attached. <span class="mark">◆</span></div>
+          <div class="msg them">Also watch HN for mentions of us.</div>
+          <div class="vfoot"><span class="vdot"></span>same agent, same memory, every surface</div>
         </div></div>
       </div>
 
       <div class="feat reveal">
         <div class="feat-text">
           <span class="label">Never forgets<span class="line"></span><span class="dot"></span></span>
-          <h3>A memory that <span class="grad">compounds</span></h3>
+          <h3>A memory that compounds</h3>
           <p>JARVIS keeps a persistent memory, learns how your projects work, and writes its own reusable skills as it goes.</p>
         </div>
-        <div class="feat-art"><div class="art">
-          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
-            <ellipse cx="120" cy="52" rx="52" ry="16" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
-            <path d="M68 52v40c0 8.8 23.3 16 52 16s52-7.2 52-16V52" fill="#0e1626" stroke="#3B82F6" stroke-width="1.6"/>
-            <path d="M68 72c0 8.8 23.3 16 52 16s52-7.2 52-16M68 92c0 8.8 23.3 16 52 16s52-7.2 52-16" stroke="#60A5FA" stroke-width="1.3" opacity=".6"/>
-            <path d="M120 20l4 10 10 1-7.5 6.5 2.5 10-9-5.5-9 5.5 2.5-10L108 31l10-1z" fill="#60A5FA"/>
-          </svg>
+        <div class="feat-art"><div class="art hud" aria-hidden="true">
+          <div class="vhead">◆ Memory <span class="vsub">persists across sessions</span></div>
+          <div class="mrow"><span class="mkey">client-onboarding.md</span><span class="mval">learned Tue</span></div>
+          <div class="mrow"><span class="mkey">invoice-chaser</span><span class="mval">skill · 12 runs</span></div>
+          <div class="mrow"><span class="mkey">tone: brief, no fluff</span><span class="mval">preference</span></div>
+          <div class="vchip">+1 new skill this week</div>
         </div></div>
       </div>
 
       <div class="feat reveal">
         <div class="feat-text">
           <span class="label">Works while you sleep<span class="line"></span><span class="dot"></span></span>
-          <h3>Scheduled, <span class="grad">unattended</span></h3>
+          <h3>Scheduled, unattended</h3>
           <p>Schedule jobs in plain language. JARVIS runs unattended and delivers the reports and briefings you asked for.</p>
         </div>
-        <div class="feat-art"><div class="art">
-          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
-            <path d="M150 40a44 44 0 1 0 40 62 34 34 0 0 1-40-40 44 44 0 0 0 0-22z" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
-            <circle cx="86" cy="112" r="30" fill="#0e1626" stroke="#60A5FA" stroke-width="1.6"/>
-            <path d="M86 96v16l11 7" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/>
-            <g fill="#60A5FA"><circle cx="176" cy="52" r="2"/><circle cx="196" cy="70" r="1.5"/><circle cx="188" cy="40" r="1.5"/></g>
-          </svg>
+        <div class="feat-art"><div class="art hud" aria-hidden="true">
+          <div class="vhead">◆ Scheduled <span class="vsub">runs unattended</span></div>
+          <div class="srow"><span class="stime">03:00</span><span class="sname">Nightly digest → Telegram</span><span class="st"><span class="run">RUNNING</span><span class="ok">✓ DONE</span></span></div>
+          <div class="srow dim2"><span class="stime">07:30</span><span class="sname">Inbox triage &amp; briefing</span><span class="snext">NEXT</span></div>
+          <div class="srow dim2"><span class="stime">MON</span><span class="sname">Chase unpaid invoices</span><span class="snext">QUEUED</span></div>
+          <div class="vfoot"><span class="vdot"></span>you were asleep for all three</div>
         </div></div>
       </div>
 
       <div class="feat reveal">
         <div class="feat-text">
           <span class="label">Delegates like a team<span class="line"></span><span class="dot"></span></span>
-          <h3>Subagents in <span class="grad">parallel</span></h3>
+          <h3>Subagents in parallel</h3>
           <p>Hand big jobs to isolated subagents that run their own tasks in parallel and report back when they're done.</p>
         </div>
-        <div class="feat-art"><div class="art">
-          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
-            <g stroke="#3B82F6" stroke-width="1.5" opacity=".5"><path d="M120 46V78M120 78 60 110M120 78 180 110"/></g>
-            <rect x="98" y="26" width="44" height="30" rx="8" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
-            <text x="120" y="46" fill="#60A5FA" font-family="Inter,sans-serif" font-size="12" font-weight="800" text-anchor="middle">JV</text>
-            <g fill="#0e1626" stroke="#60A5FA" stroke-width="1.5"><rect x="38" y="108" width="44" height="34" rx="8"/><rect x="98" y="108" width="44" height="34" rx="8"/><rect x="158" y="108" width="44" height="34" rx="8"/></g>
-            <g stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round"><path d="M48 120h24M48 128h16M108 120h24M108 128h16M168 120h24M168 128h16"/></g>
-          </svg>
+        <div class="feat-art"><div class="art hud" aria-hidden="true">
+          <div class="vhead">◆ Subagents <span class="vsub">parallel · isolated</span></div>
+          <div class="arow"><span class="aname">research: competitors</span><div class="bar"><i style="--w:1"></i></div><span class="apct okc">✓</span></div>
+          <div class="arow"><span class="aname">draft: outreach emails</span><div class="bar"><i style="--w:.64"></i></div><span class="apct">64%</span></div>
+          <div class="arow"><span class="aname">audit: card fees</span><div class="bar"><i style="--w:.38"></i></div><span class="apct">38%</span></div>
+          <div class="vfoot"><span class="vdot"></span>three jobs, zero check-ins</div>
         </div></div>
       </div>
 
       <div class="feat reveal">
         <div class="feat-text">
           <span class="label">Sees the web<span class="line"></span><span class="dot"></span></span>
-          <h3>Search, browse, <span class="grad">and see</span></h3>
+          <h3>Search, browse, and see</h3>
           <p>Web search, browser automation, vision, and image generation — JARVIS can look things up, click through pages, and create.</p>
         </div>
-        <div class="feat-art"><div class="art">
-          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
-            <circle cx="104" cy="82" r="46" fill="#0e1626" stroke="#3B82F6" stroke-width="1.6"/>
-            <path d="M58 82h92M104 36c14 12 14 80 0 92M104 36c-14 12-14 80 0 92M66 58c24 12 52 12 76 0M66 106c24-12 52-12 76 0" stroke="#60A5FA" stroke-width="1.2" opacity=".6"/>
-            <circle cx="150" cy="120" r="20" fill="#111a2e" stroke="#3B82F6" stroke-width="2"/>
-            <path d="M164 134l16 16" stroke="#60A5FA" stroke-width="3" stroke-linecap="round"/>
-          </svg>
+        <div class="feat-art"><div class="art hud v-web" aria-hidden="true">
+          <div class="vbrowser"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><span class="baddr">jarvis is browsing — 3 tabs open</span></div>
+          <div class="bline b1"></div>
+          <div class="bline b2"></div>
+          <div class="wfind">◆ found: competitor pricing changed <span class="wsub">screenshot attached</span></div>
+          <div class="bline b3"></div>
+          <div class="vfoot"><span class="vdot"></span>search · browse · vision · images</div>
+          <span class="vscan"></span>
         </div></div>
       </div>
 
       <div class="feat reveal">
         <div class="feat-text">
           <span class="label">Runs on your machine<span class="line"></span><span class="dot"></span></span>
-          <h3>Your hardware, <span class="grad">your keys</span></h3>
+          <h3>Your hardware, your keys</h3>
           <p>JARVIS runs on your machine with your own keys — no accounts, no lock-in. Open source under the hood (MIT).</p>
         </div>
-        <div class="feat-art"><div class="art">
-          <svg viewBox="0 0 240 165" fill="none" aria-hidden="true">
-            <rect x="80" y="52" width="80" height="66" rx="8" fill="#111a2e" stroke="#3B82F6" stroke-width="1.6"/>
-            <rect x="98" y="70" width="44" height="30" rx="4" fill="#0e1626" stroke="#60A5FA" stroke-width="1.4"/>
-            <g stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"><path d="M96 52V40M120 52V40M144 52V40M96 118v12M120 118v12M144 118v12M80 74H68M80 96H68M160 74h12M160 96h12"/></g>
-            <text x="120" y="92" fill="#60A5FA" font-family="Inter,sans-serif" font-size="12" font-weight="800" text-anchor="middle">MIT</text>
-          </svg>
+        <div class="feat-art"><div class="art hud" aria-hidden="true">
+          <div class="vhead">◆ Local <span class="vsub">your machine · your keys</span></div>
+          <div class="tline"><span class="tp">$</span> jarvis status</div>
+          <div class="tline okl"><span class="tdot">●</span> gateway <b>ready</b></div>
+          <div class="tline okl"><span class="tdot">●</span> keys <b>local only</b></div>
+          <div class="tline okl"><span class="tdot">●</span> source <b>open · MIT</b></div>
+          <div class="vfoot"><span class="vdot"></span>no accounts. no lock-in.</div>
         </div></div>
       </div>
 
@@ -441,10 +606,10 @@
   <section class="stats">
     <div class="wrap">
       <div class="stat-grid">
-        <div class="stat reveal"><div class="num grad" data-count="3">3</div><div class="lbl">ways to run it</div><div class="sub">Desktop · Terminal · Phone</div></div>
-        <div class="stat reveal"><div class="num grad">24/7</div><div class="lbl">always on</div><div class="sub">Scheduled &amp; unattended</div></div>
-        <div class="stat reveal"><div class="num grad" data-count="100" data-suffix="%">100%</div><div class="lbl">yours</div><div class="sub">Runs on your machine</div></div>
-        <div class="stat reveal"><div class="num grad" data-count="1">1</div><div class="lbl">line to install</div><div class="sub">Open source · MIT</div></div>
+        <div class="stat hud reveal"><div class="num" data-count="3">3</div><div class="lbl">ways to run it</div><div class="sub">Desktop · Terminal · Phone</div></div>
+        <div class="stat hud reveal"><div class="num">24/7</div><div class="lbl">always on</div><div class="sub">Scheduled &amp; unattended</div></div>
+        <div class="stat hud reveal"><div class="num" data-count="100" data-suffix="%">100%</div><div class="lbl">yours</div><div class="sub">Runs on your machine</div></div>
+        <div class="stat hud reveal"><div class="num" data-count="1">1</div><div class="lbl">line to install</div><div class="sub">Open source · MIT</div></div>
       </div>
     </div>
   </section>
@@ -452,11 +617,11 @@
   <!-- ===== 5. AFTER YOU DOWNLOAD ===== -->
   <section class="gs">
     <div class="wrap">
-      <div class="section-head reveal" style="margin-bottom:28px">
+      <div class="section-head reveal" style="margin-bottom:26px">
         <span class="label">Getting started<span class="line"></span><span class="dot"></span></span>
-        <h2>After you <span class="grad">download</span></h2>
+        <h2>After you download</h2>
       </div>
-      <div class="gs-box reveal">
+      <div class="gs-box hud reveal">
         <p>Run the installer for your platform (one line, above). It sets up everything and creates a <b>JARVIS</b> launch point. On <b>first launch</b>, JARVIS will ask you to:</p>
         <ol>
           <li><b>Connect an AI provider key</b> — paste an API key (e.g. Anthropic) so the agent can think.</li>
@@ -499,7 +664,13 @@
     var mac = document.getElementById('btn-mac');
     var win = document.getElementById('btn-win');
     var detected = document.getElementById('detected');
-    function makePrimary(on, off) { on.classList.add('primary'); on.querySelector('[data-rec]').textContent = 'Recommended for you'; off.classList.remove('primary'); off.querySelector('[data-rec]').textContent = ''; }
+    function makePrimary(on, off) {
+      on.classList.add('primary'); off.classList.remove('primary');
+      on.querySelector('[data-rec]').textContent = 'Recommended for you';
+      off.querySelector('[data-rec]').textContent = '';
+      // the idle halo follows the featured button
+      var halo = off.querySelector('.halo'); if (halo) on.insertBefore(halo, on.firstChild);
+    }
 
     if (os === 'mac') {
       makePrimary(mac, win); mac.parentNode.insertBefore(mac, win);
@@ -564,6 +735,7 @@
         entries.forEach(function (e) {
           if (!e.isIntersecting) return;
           e.target.classList.add('show');
+          if (e.target.querySelector('.gs-box')) { var g = e.target.querySelector('.gs-box'); g.classList.add('ignite'); }
           var nums = e.target.querySelectorAll('[data-count]');
           nums.forEach(function (n) { countUp(n); });
           obs.unobserve(e.target);
@@ -587,6 +759,27 @@
         if (ticking) return; ticking = true;
         requestAnimationFrame(function () { if (glows) glows.style.transform = 'translateY(' + (window.pageYOffset * 0.12) + 'px)'; ticking = false; });
       }, { passive: true });
+    }
+
+    // ----- Cursor-proximity glow in the hero (pointer devices only; cheap:
+    //       one transform per rAF, opacity fades on enter/leave)
+    if (window.matchMedia && window.matchMedia('(hover:hover) and (prefers-reduced-motion: no-preference)').matches) {
+      var hero = document.querySelector('.hero');
+      var cur = document.getElementById('cur');
+      if (hero && cur) {
+        var pend = false, cx = 0, cy = 0;
+        hero.addEventListener('mousemove', function (ev) {
+          var r = hero.getBoundingClientRect();
+          cx = ev.clientX - r.left - 180; cy = ev.clientY - r.top - 180;
+          if (pend) return; pend = true;
+          requestAnimationFrame(function () {
+            cur.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)';
+            cur.style.opacity = '1';
+            pend = false;
+          });
+        }, { passive: true });
+        hero.addEventListener('mouseleave', function () { cur.style.opacity = '0'; });
+      }
     }
 
     document.getElementById('yr').textContent = new Date().getFullYear();
