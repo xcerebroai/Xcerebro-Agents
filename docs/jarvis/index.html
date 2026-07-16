@@ -124,10 +124,13 @@
   .h-title{font-family:var(--display); font-weight:700; font-size:clamp(2.6rem,7.6vw,4.7rem);
     line-height:1.06; letter-spacing:.005em; margin-top:24px}
   .h-title > span{display:block}
-  /* type stays mostly white/dim — glow belongs to objects, not typography */
+  /* type stays mostly white/dim — glow belongs to objects, not typography.
+     Hierarchy: the wordmark line (.l1) is the ONE pure-white, full-weight
+     element; .l2 steps down a notch in size, weight, and brightness so it
+     reads as the supporting line (the gradient "24/7." still carries it). */
   .h-title .l1{color:#fff; filter:drop-shadow(0 0 18px rgba(59,130,246,.14))}
-  .h-title .l2{font-size:.74em; color:#DDE4EE; margin-top:.18em;
-    filter:drop-shadow(0 0 14px rgba(59,130,246,.12))}
+  .h-title .l2{font-size:.68em; font-weight:600; color:#CBD5E1; margin-top:.22em;
+    letter-spacing:.01em; filter:drop-shadow(0 0 14px rgba(59,130,246,.10))}
   /* wordmark: chamfered corner clips the J (echoes the ◆ mark); the I is a
      soft glint — near-white with a blue underglow, not a saturated block */
   .wm{display:inline-block; clip-path:polygon(0 .3em, .22em 0, 100% 0, 100% 100%, 0 100%)}
@@ -185,6 +188,16 @@
   .copy.copied{background:#16321f; border-color:#2f7d4f; color:#7ee0a3}
   .nojs .copy{display:none}
   .install-note{color:var(--dim); font-size:.85rem; margin-top:12px; text-align:center}
+  /* Caption follows the download-button state (html.setup-live is set by
+     upgradeToSetupBinaries): Setup binaries live -> the "download, open it,
+     done" caption is primary and the command box demotes to a labeled
+     alternate path; script fallback -> the original one-liner caption. */
+  .note-setup{display:none; margin-top:14px}
+  .alt-label{display:none; color:var(--dim); font-size:.8rem; font-weight:600;
+    letter-spacing:.08em; text-transform:uppercase; text-align:center; margin:0 0 10px}
+  html.setup-live .note-setup{display:block}
+  html.setup-live .alt-label{display:block}
+  html.setup-live .note-script{display:none}
 
   /* ---------- PRODUCT SHOT ---------- */
   .product{padding:64px 0 48px}
@@ -351,6 +364,7 @@
     html.js .hero .inner > *:nth-child(4){animation-delay:.48s}
     html.js .hero .inner > *:nth-child(5){animation-delay:.60s}
     html.js .hero .inner > *:nth-child(6){animation-delay:.70s}
+    html.js .hero .inner > *:nth-child(7){animation-delay:.78s}
     @keyframes bootIn{from{opacity:0; transform:translateY(14px)}}
     html.js .glows{animation:glowIgnite 1.5s ease-out .1s backwards}
     @keyframes glowIgnite{from{opacity:0}}
@@ -451,8 +465,10 @@
         </a>
       </div>
       <div class="detected" id="detected"></div>
+      <p class="install-note note-setup">Download, open it, done — the installer handles prerequisites, JARVIS, and the desktop app.</p>
 
       <div class="hero-install">
+        <p class="alt-label">Prefer the terminal?</p>
         <div class="tabs">
           <input type="radio" name="os" id="os-win" checked>
           <input type="radio" name="os" id="os-mac">
@@ -480,7 +496,7 @@
               </div>
             </div>
           </div>
-          <p class="install-note">Run the one-liner after downloading. It installs prerequisites, JARVIS, and the desktop app.</p>
+          <p class="install-note note-script">Run the one-liner after downloading. It installs prerequisites, JARVIS, and the desktop app.</p>
         </div>
       </div>
     </div>
@@ -654,7 +670,7 @@
 
   <!-- ===== 6. FOOTER ===== -->
   <footer>
-    <a class="verbadge" href="https://github.com/xcerebroai/jarvis-agent/releases/latest"><span class="pip"></span>JARVIS v1.0.0</a>
+    <a class="verbadge" href="https://github.com/xcerebroai/jarvis-agent/releases/latest"><span class="pip"></span>JARVIS v1.1.0</a>
     <div class="links">
       <a href="https://github.com/xcerebroai/jarvis-agent">GitHub</a>
       <a href="https://github.com/xcerebroai/jarvis-agent#readme">Docs</a>
@@ -718,8 +734,11 @@
           if (!rel || !rel.assets) return;
           var url = {};
           rel.assets.forEach(function (a) { url[a.name] = a.browser_download_url; });
-          if (win && url['JARVIS-Setup.exe']) { win.href = url['JARVIS-Setup.exe']; win.setAttribute('data-setup', '1'); }
-          if (mac && url['JARVIS-Setup.dmg']) { mac.href = url['JARVIS-Setup.dmg']; mac.setAttribute('data-setup', '1'); }
+          var flipped = false;
+          if (win && url['JARVIS-Setup.exe']) { win.href = url['JARVIS-Setup.exe']; win.setAttribute('data-setup', '1'); flipped = true; }
+          if (mac && url['JARVIS-Setup.dmg']) { mac.href = url['JARVIS-Setup.dmg']; mac.setAttribute('data-setup', '1'); flipped = true; }
+          // Caption follows the buttons (see .note-setup/.alt-label CSS).
+          if (flipped) { document.documentElement.classList.add('setup-live'); }
         })
         .catch(function () {});
     })();
