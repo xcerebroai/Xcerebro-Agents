@@ -32,7 +32,7 @@
   :root{
     --black:#0A0A0A; --midnight:#0F172A; --panel:#111a2e;
     --electric:#3B82F6; --light:#60A5FA;
-    --text:#E5E7EB; --muted:#9AA4B2; --dim:#6B7280; --border:#1F2937;
+    --text:#E5E7EB; --muted:#94A3B8; --dim:#6B7280; --border:#1F2937;
     --glow:rgba(59,130,246,.45);
     --grad:linear-gradient(120deg,#60A5FA,#3B82F6);
     --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
@@ -52,8 +52,8 @@
     mask-image:radial-gradient(130% 90% at 50% 0%, #000 35%, transparent 82%)}
   /* two large ambient glows (electric upper-left, deeper blue upper-right) */
   body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none;
-    background:radial-gradient(46% 40% at 14% 6%, rgba(59,130,246,.17), transparent 62%),
-      radial-gradient(44% 38% at 86% 4%, rgba(29,78,216,.15), transparent 62%)}
+    background:radial-gradient(46% 40% at 14% 6%, rgba(59,130,246,.10), transparent 62%),
+      radial-gradient(44% 38% at 86% 4%, rgba(29,78,216,.09), transparent 62%)}
 
   a{color:var(--light); text-decoration:none}
   a:hover{text-decoration:underline}
@@ -64,10 +64,10 @@
   .grad{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
 
   /* section label: TEXT ——• */
-  .label{display:inline-flex; align-items:center; gap:12px; color:var(--light);
+  .label{display:inline-flex; align-items:center; gap:12px; color:rgba(96,165,250,.72);
     font-size:.74rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase}
-  .label .line{width:42px; height:1px; background:linear-gradient(90deg, transparent, var(--electric))}
-  .label .dot{width:6px; height:6px; border-radius:50%; background:var(--light); box-shadow:0 0 9px var(--light)}
+  .label .line{width:42px; height:1px; background:linear-gradient(90deg, transparent, rgba(59,130,246,.55))}
+  .label .dot{width:6px; height:6px; border-radius:50%; background:rgba(96,165,250,.8); box-shadow:0 0 6px rgba(96,165,250,.5)}
   .section-head{text-align:center; max-width:660px; margin:0 auto 34px}
   .section-head .label{justify-content:center; margin-bottom:14px}
   h2{font-family:var(--display); font-weight:700; color:#fff; text-wrap:balance;
@@ -77,10 +77,10 @@
   /* HUD corner ticks — precise interface detailing on the card surfaces */
   .hud{position:relative}
   .hud::before,.hud::after{content:""; position:absolute; width:13px; height:13px; pointer-events:none;
-    opacity:.45; transition:opacity .3s}
+    opacity:.26; transition:opacity .3s}
   .hud::before{top:-1px; left:-1px; border-top:1.5px solid var(--electric); border-left:1.5px solid var(--electric); border-top-left-radius:3px}
   .hud::after{bottom:-1px; right:-1px; border-bottom:1.5px solid var(--electric); border-right:1.5px solid var(--electric); border-bottom-right-radius:3px}
-  .hud:hover::before,.hud:hover::after{opacity:1}
+  .hud:hover::before,.hud:hover::after{opacity:.85}
 
   /* reveal-on-scroll (JS opts in; no-JS + reduced-motion = visible) */
   html:not(.nojs) .reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1)}
@@ -92,39 +92,46 @@
   .glow{position:absolute; border-radius:50%; left:50%; top:40%; transform:translate(-50%,-50%); filter:blur(34px)}
   /* slow ambient breathing — the system idling under the page */
   .glow.g1{width:min(760px,92vw); height:min(760px,92vw);
-    background:radial-gradient(circle, rgba(59,130,246,.36), rgba(59,130,246,.09) 46%, transparent 68%); animation:breathe 9s ease-in-out infinite}
+    background:radial-gradient(circle, rgba(59,130,246,.22), rgba(59,130,246,.055) 46%, transparent 68%); animation:breathe 9s ease-in-out infinite}
   .glow.g2{width:min(440px,62vw); height:min(440px,62vw); top:34%; left:38%;
-    background:radial-gradient(circle, rgba(96,165,250,.32), transparent 62%); animation:breathe 8s ease-in-out infinite 1.2s}
+    background:radial-gradient(circle, rgba(96,165,250,.19), transparent 62%); animation:breathe 8s ease-in-out infinite 1.2s}
   .glow.g3{width:min(520px,66vw); height:min(520px,66vw); top:36%; left:64%;
-    background:radial-gradient(circle, rgba(29,78,216,.28), transparent 62%); animation:breathe 10s ease-in-out infinite .5s}
-  @keyframes breathe{0%,100%{opacity:.68; transform:translate(-50%,-50%) scale(1)} 50%{opacity:.95; transform:translate(-50%,-50%) scale(1.055)}}
+    background:radial-gradient(circle, rgba(29,78,216,.17), transparent 62%); animation:breathe 10s ease-in-out infinite .5s}
+  @keyframes breathe{0%,100%{opacity:.55; transform:translate(-50%,-50%) scale(1)} 50%{opacity:.8; transform:translate(-50%,-50%) scale(1.055)}}
   /* radar sweep — one thin conic wedge, barely there */
   .sweep{position:absolute; left:50%; top:40%; width:min(720px,90vw); height:min(720px,90vw);
     margin:calc(min(720px,90vw)/-2) 0 0 calc(min(720px,90vw)/-2); border-radius:50%; pointer-events:none;
-    background:conic-gradient(from 0deg, transparent 0deg 336deg, rgba(96,165,250,.10) 352deg, transparent 360deg)}
+    background:conic-gradient(from 0deg, transparent 0deg 336deg, rgba(96,165,250,.07) 352deg, transparent 360deg)}
   /* cursor-proximity glow (JS positions it; hidden on touch / reduced motion) */
   #cur{position:absolute; left:0; top:0; width:360px; height:360px; border-radius:50%; z-index:0;
     background:radial-gradient(circle, rgba(96,165,250,.09), transparent 64%);
     opacity:0; transition:opacity .5s ease; pointer-events:none; will-change:transform}
 
-  .hero .inner{position:relative; z-index:1; max-width:820px}
+  /* min-width:0 + width:100%: .inner is a grid item, so min-width:auto would
+     let the nowrap install command's intrinsic width inflate it past narrow
+     viewports (pre-existing phone overflow — the command box must scroll
+     INSIDE, never size the hero) */
+  .hero .inner{position:relative; z-index:1; max-width:820px; width:100%; min-width:0}
   .pills{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  /* badge chips: dark fill, thin blue outline, letterspaced caps — quiet, precise */
   .pill{display:inline-flex; align-items:center; gap:9px; padding:7px 16px; border-radius:999px;
-    border:1px solid rgba(59,130,246,.42); background:rgba(59,130,246,.07); color:var(--light);
-    font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; box-shadow:0 0 22px rgba(59,130,246,.16)}
-  .pill .d{width:7px; height:7px; border-radius:50%; background:var(--light); box-shadow:0 0 9px var(--light)}
+    border:1px solid rgba(59,130,246,.3); background:rgba(9,14,26,.72); color:#8FA9CE;
+    font-size:.7rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase}
+  .pill .d{width:6px; height:6px; border-radius:50%; background:rgba(96,165,250,.85); box-shadow:0 0 6px rgba(96,165,250,.5)}
   .pill.sys{font-family:var(--mono); letter-spacing:.2em; padding:7px 13px}
   .pill.sys .d{background:#28c840; box-shadow:0 0 9px #28c840}
 
   .h-title{font-family:var(--display); font-weight:700; font-size:clamp(2.6rem,7.6vw,4.7rem);
     line-height:1.06; letter-spacing:.005em; margin-top:24px}
   .h-title > span{display:block}
-  .h-title .l1{color:#fff; filter:drop-shadow(0 0 22px rgba(59,130,246,.28))}
-  .h-title .l2{filter:drop-shadow(0 0 30px rgba(59,130,246,.4))}
-  /* wordmark: chamfered corner clips the J (echoes the ◆ mark); the I is the
-     power indicator — lit electric, like the system's on-light */
+  /* type stays mostly white/dim — glow belongs to objects, not typography */
+  .h-title .l1{color:#fff; filter:drop-shadow(0 0 18px rgba(59,130,246,.14))}
+  .h-title .l2{font-size:.74em; color:#DDE4EE; margin-top:.18em;
+    filter:drop-shadow(0 0 14px rgba(59,130,246,.12))}
+  /* wordmark: chamfered corner clips the J (echoes the ◆ mark); the I is a
+     soft glint — near-white with a blue underglow, not a saturated block */
   .wm{display:inline-block; clip-path:polygon(0 .3em, .22em 0, 100% 0, 100% 100%, 0 100%)}
-  .wm .i{color:var(--electric); text-shadow:0 0 20px rgba(59,130,246,.95)}
+  .wm .i{color:#CFE0FF; text-shadow:0 0 14px rgba(59,130,246,.6), 0 2px 22px rgba(59,130,246,.35)}
   .subtag{margin:20px auto 0; max-width:640px; color:var(--muted); font-size:clamp(1rem,2.4vw,1.15rem)}
 
   .downloads{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:34px}
@@ -133,12 +140,12 @@
     transition:transform .14s ease, box-shadow .25s ease, background .25s, color .2s, border-color .2s;
     border:1.5px solid rgba(59,130,246,.5); background:rgba(59,130,246,.05); color:var(--light)}
   .btn svg{width:22px; height:22px; flex:0 0 auto}
-  .btn:hover{transform:translateY(-2px); color:#fff; text-decoration:none; border-color:var(--electric); box-shadow:0 10px 40px var(--glow)}
-  .btn.primary{background:var(--grad); color:#fff; border-color:transparent; box-shadow:0 8px 34px var(--glow)}
-  .btn.primary:hover{box-shadow:0 14px 52px rgba(59,130,246,.7)}
-  /* featured button carries a faint idle pulse — the eye lands where the power is */
+  .btn:hover{transform:translateY(-2px); color:#fff; text-decoration:none; border-color:var(--electric); box-shadow:0 8px 24px rgba(59,130,246,.3)}
+  /* featured button reads "powered", not radioactive: fill stays, glow halved */
+  .btn.primary{background:var(--grad); color:#fff; border-color:transparent; box-shadow:0 5px 18px rgba(59,130,246,.3)}
+  .btn.primary:hover{box-shadow:0 8px 28px rgba(59,130,246,.42)}
   .btn.primary .halo{position:absolute; inset:-3px; border-radius:15px; z-index:-1; pointer-events:none;
-    box-shadow:0 0 38px 8px rgba(59,130,246,.5); opacity:.28}
+    box-shadow:0 0 20px 4px rgba(59,130,246,.35); opacity:.2}
   .btn .rec{font-size:.7rem; font-weight:600; opacity:.85; margin-left:2px}
   .btn .rec:empty{display:none}
   .detected{margin-top:16px; color:var(--dim); font-size:.9rem; min-height:1.2em}
@@ -160,7 +167,7 @@
   #os-win:checked ~ .panels .panel-win,
   #os-mac:checked ~ .panels .panel-mac{display:block}
   .cmdbar{display:flex; align-items:center; gap:12px; text-align:left; background:var(--midnight);
-    border:1px solid rgba(59,130,246,.28); border-radius:12px; padding:13px 15px; box-shadow:0 0 40px rgba(59,130,246,.1)}
+    border:1px solid rgba(59,130,246,.2); border-radius:12px; padding:13px 15px; box-shadow:0 0 28px rgba(59,130,246,.05)}
   .cmdbar .prompt{color:var(--electric); font-family:var(--mono); user-select:none}
   /* overflow scrolls but shows no scrollbar; right edge fades instead */
   .cmdbar code{font-family:var(--mono); font-size:.88rem; color:var(--light); overflow-x:auto; white-space:nowrap; flex:1;
@@ -183,9 +190,15 @@
   .product{padding:64px 0 48px}
   .mock-wrap{max-width:940px; margin:0 auto; position:relative}
   .mock-wrap::before{content:""; position:absolute; inset:4% 8% -10% 8%; z-index:0;
-    background:radial-gradient(60% 60% at 50% 40%, var(--glow), transparent 70%); filter:blur(46px)}
-  .mock{position:relative; z-index:1; border:1px solid #24324a; border-radius:16px; overflow:hidden;
-    background:var(--midnight); box-shadow:0 34px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(59,130,246,.16)}
+    background:radial-gradient(60% 60% at 50% 40%, rgba(59,130,246,.3), transparent 70%); filter:blur(46px)}
+  /* faint reflection under the frame — screen light falling on the floor */
+  .mock-wrap::after{content:""; position:absolute; left:8%; right:8%; bottom:-44px; height:44px; z-index:0;
+    background:radial-gradient(52% 100% at 50% 0%, rgba(59,130,246,.2), transparent 72%); filter:blur(7px)}
+  /* THE glow object: a powered-on screen in a dark room — neon edge, layered bloom */
+  .mock{position:relative; z-index:1; border:1px solid rgba(59,130,246,.6); border-radius:16px; overflow:hidden;
+    background:var(--midnight);
+    box-shadow:0 0 0 1px rgba(59,130,246,.22), 0 0 22px rgba(59,130,246,.3),
+      0 0 74px rgba(59,130,246,.2), 0 34px 90px rgba(0,0,0,.6)}
   .mock .chrome{display:flex; align-items:center; gap:8px; padding:11px 16px; background:#0c1424; border-bottom:1px solid var(--border)}
   .mock .dot{width:11px; height:11px; border-radius:50%}
   .mock .dot.r{background:#ff5f57}.mock .dot.y{background:#febc2e}.mock .dot.g{background:#28c840}
@@ -212,8 +225,8 @@
   .mock .inputbar .send{width:30px; height:30px; border-radius:8px; background:var(--electric); display:grid; place-items:center; flex:0 0 auto}
   .mock .inputbar .send svg{width:16px; height:16px; fill:#fff}
   .hudtag{position:absolute; top:14px; right:16px; display:inline-flex; align-items:center; gap:7px;
-    font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; color:var(--light);
-    border:1px solid rgba(59,130,246,.4); border-radius:20px; padding:4px 11px; background:rgba(59,130,246,.08)}
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; color:#8FA9CE;
+    border:1px solid rgba(59,130,246,.28); border-radius:20px; padding:4px 11px; background:rgba(9,14,26,.72)}
   .hudtag .hdot{width:6px; height:6px; border-radius:50%; background:#28c840; box-shadow:0 0 8px #28c840}
 
   /* ---------- FEATURES ---------- */
@@ -231,10 +244,10 @@
   .art{width:100%; max-width:390px; aspect-ratio:16/10; border:1px solid var(--border); border-radius:16px;
     background:linear-gradient(180deg,#0e1626,#0b1120); padding:16px 16px 14px; overflow:hidden;
     display:flex; flex-direction:column; gap:8px; text-align:left;
-    box-shadow:0 0 46px rgba(59,130,246,.08); transition:border-color .25s, box-shadow .25s, transform .25s}
+    box-shadow:0 0 30px rgba(59,130,246,.04); transition:border-color .25s, box-shadow .25s, transform .25s}
   .feat:hover .art{border-color:rgba(59,130,246,.55); box-shadow:0 0 66px rgba(59,130,246,.2); transform:translateY(-3px)}
   .vhead{display:flex; align-items:baseline; gap:8px; font-size:.66rem; font-weight:600; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--light); margin-bottom:2px}
+    text-transform:uppercase; color:rgba(96,165,250,.72); margin-bottom:2px}
   .vhead .vsub{color:var(--dim); letter-spacing:.06em; font-weight:500; text-transform:none; font-size:.72rem;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
   .vfoot{display:flex; align-items:center; gap:7px; margin-top:auto; color:var(--dim); font-size:.72rem}
@@ -297,7 +310,7 @@
     transition:border-color .25s, box-shadow .25s, transform .25s}
   .stat:hover{border-color:rgba(59,130,246,.55); box-shadow:0 0 44px rgba(59,130,246,.16); transform:translateY(-2px)}
   .stat .num{font-family:var(--display); font-weight:700; color:#fff; font-size:clamp(1.9rem,4vw,2.6rem); line-height:1;
-    letter-spacing:.01em; filter:drop-shadow(0 0 16px rgba(59,130,246,.35)); font-variant-numeric:tabular-nums}
+    letter-spacing:.01em; filter:drop-shadow(0 0 12px rgba(59,130,246,.2)); font-variant-numeric:tabular-nums}
   .stat .lbl{color:var(--text); font-weight:600; margin-top:10px; font-size:.95rem}
   .stat .sub{color:var(--dim); font-size:.8rem; margin-top:4px}
 
@@ -305,8 +318,8 @@
   .gs{padding:56px 0 64px; position:relative}
   .gs::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
     background:radial-gradient(60% 50% at 50% 40%, rgba(59,130,246,.07), transparent 70%)}
-  .gs-box{max-width:720px; margin:0 auto; background:var(--panel); border:1px solid rgba(59,130,246,.28); border-radius:16px;
-    padding:28px 32px; box-shadow:0 0 50px rgba(59,130,246,.1)}
+  .gs-box{max-width:720px; margin:0 auto; background:var(--panel); border:1px solid rgba(59,130,246,.18); border-radius:16px;
+    padding:28px 32px; box-shadow:0 0 36px rgba(59,130,246,.05)}
   .gs-box ol{margin:14px 0 0 20px; color:var(--muted)}
   .gs-box li{margin:8px 0}
   .gs-box li b{color:var(--text); font-weight:600}
@@ -314,8 +327,8 @@
 
   /* ---------- FOOTER ---------- */
   footer{padding:48px 24px 56px; text-align:center; color:var(--dim); font-size:.9rem; border-top:1px solid var(--border)}
-  .verbadge{display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(59,130,246,.42);
-    background:rgba(59,130,246,.08); color:var(--light); border-radius:20px; padding:6px 16px; font-weight:600; font-size:.85rem; margin-bottom:22px}
+  .verbadge{display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(59,130,246,.28);
+    background:rgba(9,14,26,.72); color:#8FA9CE; border-radius:20px; padding:6px 16px; font-weight:600; font-size:.85rem; margin-bottom:22px}
   .verbadge:hover{text-decoration:none; box-shadow:0 0 24px var(--glow)}
   .verbadge .pip{width:7px; height:7px; border-radius:50%; background:#28c840; box-shadow:0 0 8px #28c840}
   footer .links{margin-bottom:14px}
@@ -340,7 +353,7 @@
     .sweep{animation:sweep 16s linear infinite 1.6s}
     @keyframes sweep{from{transform:rotate(0)} to{transform:rotate(360deg)}}
     .btn.primary .halo{animation:halo 3.4s ease-in-out infinite 1.4s}
-    @keyframes halo{0%,100%{opacity:.22} 50%{opacity:.6}}
+    @keyframes halo{0%,100%{opacity:.14} 50%{opacity:.38}}
 
     /* ignite as sections power on (one brief bloom, then settle) */
     html.js .reveal.show .art, html.js .stat.reveal.show, html.js .gs-box.ignite{animation:ignite .9s ease-out .1s}
@@ -388,7 +401,10 @@
   }
   @media (max-width:560px){
     .hero{padding:88px 20px 56px}
-    .btn{width:100%; justify-content:center}
+    /* nowrap + the "Recommended" tag exceeds narrow phones — the detected
+       line below the buttons already carries the recommendation */
+    .btn{width:100%; justify-content:center; min-width:0}
+    .btn .rec{display:none}
     .downloads{flex-direction:column}
     .cmdbar{flex-wrap:wrap}
     .cmdbar code{flex-basis:100%; order:3}
@@ -416,7 +432,7 @@
       </div>
       <h1 class="h-title">
         <span class="l1">Meet <span class="wm">JARV<span class="i">I</span>S</span>.</span>
-        <span class="l2 grad">It Runs Your Business 24/7.</span>
+        <span class="l2">It Runs Your Business <span class="grad">24/7.</span></span>
       </h1>
       <p class="subtag">An AI agent that works across your desktop, terminal, and phone — with its own memory, its own skills, and the run of your tools.</p>
 
