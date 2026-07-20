@@ -187,6 +187,7 @@ body.locked #gate{display:flex}
     <p class="gate-sub">Enter credentials to unlock the full course bible</p>
     <div id="gate-form">
       <input type="text" id="g-name" placeholder="FIRST NAME" autocomplete="given-name" aria-label="First name">
+      <input type="text" id="g-lname" placeholder="LAST NAME" autocomplete="family-name" aria-label="Last name">
       <input type="email" id="g-email" placeholder="EMAIL ADDRESS" autocomplete="email" aria-label="Email address">
       <button class="gate-btn" id="g-btn" type="button">Request Access →</button>
       <p class="gate-fine">Instant access · 22 modules · $0 · No spam, ever</p>
@@ -475,6 +476,7 @@ var GHL_WEBHOOK_URL = "https://services.leadconnectorhq.com/hooks/zsODNuiVWJqICp
 
   var btn=document.getElementById('g-btn'),
       nameEl=document.getElementById('g-name'),
+      lnameEl=document.getElementById('g-lname'),
       emailEl=document.getElementById('g-email'),
       form=document.getElementById('gate-form'),
       granted=document.getElementById('g-granted');
@@ -487,14 +489,16 @@ var GHL_WEBHOOK_URL = "https://services.leadconnectorhq.com/hooks/zsODNuiVWJqICp
   }
 
   function submit(){
-    var name=nameEl.value.trim(), email=emailEl.value.trim();
+    var name=nameEl.value.trim(), lname=lnameEl.value.trim(), email=emailEl.value.trim();
     var okEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     nameEl.classList.toggle('err',!name);
+    lnameEl.classList.toggle('err',!lname);
     emailEl.classList.toggle('err',!okEmail);
-    if(!name||!okEmail) return;
+    if(!name||!lname||!okEmail) return;
     btn.disabled=true; btn.textContent='TRANSMITTING…';
     var payload=JSON.stringify({
       first_name:name,
+      last_name:lname,
       email:email,
       source:'ai-course-bible',
       page:location.href,
