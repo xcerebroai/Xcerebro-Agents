@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS // Student Intake — Wholesaling Coaching | Xcerebro AI</title>
+<meta name="description" content="Wholesaling Real Estate Coaching student onboarding. Complete the intake protocol and download your PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --black:#0A0A0A;
+  --midnight:#0F172A;
+  --panel:#0D1424;
+  --border:#1F2937;
+  --blue:#3B82F6;
+  --blue-lt:#60A5FA;
+  --gray:#E5E7EB;
+  --gray-dim:#94A3B8;
+  --gray-mute:#64748B;
+  --glow:0 0 24px rgba(59,130,246,.25);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--black);
+  color:var(--gray);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% -5%, rgba(59,130,246,.14), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(96,165,250,.02) 0 1px, transparent 1px 4px);
+}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ---------- HUD BAR ---------- */
+#hud{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,10,10,.88);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.hud-inner{
+  max-width:860px;margin:0 auto;padding:10px 20px;
+  display:flex;align-items:center;gap:14px;
+}
+.reactor{position:relative;width:44px;height:44px;flex:none}
+.reactor svg{width:44px;height:44px;transform:rotate(-90deg)}
+.reactor .track{stroke:var(--border);fill:none;stroke-width:3}
+.reactor .fill{
+  stroke:var(--blue);fill:none;stroke-width:3;stroke-linecap:round;
+  filter:drop-shadow(0 0 4px rgba(59,130,246,.8));
+  transition:stroke-dashoffset .35s ease;
+}
+.reactor .core{
+  position:absolute;inset:14px;border-radius:50%;
+  background:radial-gradient(circle,var(--blue-lt),var(--blue) 70%);
+  box-shadow:0 0 10px rgba(59,130,246,.9);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.hud-text{display:flex;flex-direction:column;gap:1px;min-width:0}
+.hud-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--blue-lt);text-transform:uppercase}
+.hud-status{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud-status b{color:var(--gray);font-weight:700}
+.hud-cta{
+  margin-left:auto;flex:none;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;
+  color:var(--blue-lt);background:transparent;border:1px solid var(--blue);
+  border-radius:6px;padding:8px 14px;cursor:pointer;transition:all .2s;
+}
+.hud-cta:hover{background:rgba(59,130,246,.12);box-shadow:var(--glow)}
+
+/* ---------- HERO ---------- */
+header.hero{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:72px 20px 40px;text-align:center}
+.boot{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.28em;
+  color:var(--blue-lt);text-transform:uppercase;margin-bottom:18px;
+}
+.boot::before{content:"● ";color:var(--blue);animation:pulse 1.6s infinite}
+h1{
+  font-size:clamp(2rem,5.5vw,3.4rem);font-weight:800;letter-spacing:-.02em;
+  color:#fff;line-height:1.12;margin-bottom:10px;
+}
+h1 .jarvis{
+  background:linear-gradient(120deg,var(--blue-lt),var(--blue));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 40px rgba(59,130,246,.35);
+}
+.sub{color:var(--gray-dim);font-size:1.05rem;max-width:600px;margin:0 auto 26px}
+.typed{
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gray-mute);
+  border-left:2px solid var(--blue);padding:10px 16px;text-align:left;
+  max-width:560px;margin:0 auto;background:rgba(15,23,42,.6);border-radius:0 8px 8px 0;
+}
+.typed .cursor{display:inline-block;width:7px;height:14px;background:var(--blue-lt);vertical-align:middle;animation:blink 1s steps(1) infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- FORM ---------- */
+main{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 20px 40px}
+section.mod{
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:30px 28px;margin-bottom:26px;position:relative;overflow:hidden;
+}
+section.mod::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(59,130,246,.6),transparent);
+}
+.mod-tag{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.24em;
+  color:var(--blue);text-transform:uppercase;margin-bottom:6px;
+}
+.mod h2{font-size:1.3rem;font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:-.01em}
+.mod .mod-desc{font-size:.9rem;color:var(--gray-mute);margin-bottom:22px}
+
+.q{margin-bottom:22px}
+.q:last-child{margin-bottom:0}
+.q > label.qlabel, .q > .qlabel{
+  display:block;font-weight:600;font-size:.95rem;color:var(--gray);margin-bottom:8px;
+}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue-lt);margin-right:6px}
+.hint{font-size:.8rem;color:var(--gray-mute);font-weight:400;display:block;margin-top:2px}
+
+input[type=text],input[type=email],input[type=tel],input[type=number],textarea,select{
+  width:100%;background:var(--midnight);border:1px solid var(--border);
+  color:var(--gray);border-radius:8px;padding:11px 14px;font-family:'Inter',sans-serif;
+  font-size:.95rem;transition:border-color .2s, box-shadow .2s;
+}
+textarea{min-height:88px;resize:vertical}
+input:focus,textarea:focus,select:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.18);
+}
+input::placeholder,textarea::placeholder{color:var(--gray-mute)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2360A5FA' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.opt{
+  display:flex;align-items:center;gap:10px;background:var(--midnight);
+  border:1px solid var(--border);border-radius:8px;padding:10px 12px;
+  cursor:pointer;font-size:.9rem;color:var(--gray-dim);transition:all .15s;user-select:none;
+}
+.opt:hover{border-color:var(--gray-mute)}
+.opt:has(input:checked){border-color:var(--blue);color:#fff;background:rgba(59,130,246,.08);box-shadow:inset 0 0 12px rgba(59,130,246,.06)}
+.opt input{accent-color:var(--blue);width:15px;height:15px;flex:none}
+.otherwrap{margin-top:8px;display:none}
+.otherwrap.show{display:block}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.two{grid-template-columns:1fr}}
+
+.scale{display:flex;gap:6px;flex-wrap:wrap}
+.scale .opt{padding:8px 0;justify-content:center;min-width:40px;flex:1}
+
+/* ---------- SUBMIT ---------- */
+.finish{
+  background:linear-gradient(180deg,var(--midnight),var(--panel));
+  border:1px solid var(--blue);border-radius:14px;padding:34px 28px;text-align:center;
+  box-shadow:var(--glow);
+}
+.finish h2{color:#fff;font-size:1.4rem;margin-bottom:6px}
+.finish p{color:var(--gray-dim);font-size:.92rem;max-width:480px;margin:0 auto 20px}
+#dlBtn{
+  font-family:'Inter',sans-serif;font-weight:700;font-size:1rem;
+  background:linear-gradient(120deg,var(--blue),var(--blue-lt));color:#fff;
+  border:none;border-radius:10px;padding:15px 34px;cursor:pointer;
+  box-shadow:0 0 28px rgba(59,130,246,.4);transition:transform .15s, box-shadow .2s;
+}
+#dlBtn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(59,130,246,.6)}
+#dlBtn:disabled{opacity:.5;cursor:wait;transform:none}
+#formMsg{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#F87171;min-height:16px}
+#formMsg.ok{color:var(--blue-lt)}
+
+footer{
+  position:relative;z-index:1;text-align:center;padding:34px 20px 46px;
+  border-top:1px solid var(--border);color:var(--gray-mute);
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;
+}
+footer a{color:var(--blue-lt);text-decoration:none}
+.req{color:var(--blue-lt)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media(max-width:600px){
+  section.mod{padding:24px 18px}
+  .hud-status{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<div id="hud">
+  <div class="hud-inner">
+    <div class="reactor">
+      <svg viewBox="0 0 44 44">
+        <circle class="track" cx="22" cy="22" r="19"></circle>
+        <circle class="fill" id="ring" cx="22" cy="22" r="19" stroke-dasharray="119.4" stroke-dashoffset="119.4"></circle>
+      </svg>
+      <div class="core"></div>
+    </div>
+    <div class="hud-text">
+      <div class="hud-label">Jarvis // Intake Protocol</div>
+      <div class="hud-status" id="hudStatus">INTAKE <b>0%</b> COMPLETE — STANDING BY</div>
+    </div>
+    <button class="hud-cta" onclick="document.getElementById('finish').scrollIntoView({behavior:'smooth'})">FINALIZE ▸</button>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="boot">System Online — Xcerebro AI</div>
+  <h1>Wholesaling Coaching<br><span class="jarvis">Student Intake</span></h1>
+  <p class="sub">Welcome to the program. This intake gives your coach a complete diagnostic of your business — where you are, where you're going, and exactly how to get you there. Be thorough and honest.</p>
+  <div class="typed mono">&gt; JARVIS: Initializing student onboarding sequence...<br>&gt; JARVIS: The more detail you provide, the sharper your roadmap.<span class="cursor"></span></div>
+</header>
+
+<main id="intakeForm">
+
+<!-- ============ SECTION 1 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 01 / 08</div>
+  <h2>Personal &amp; Business Background</h2>
+  <div class="mod-desc">Identity confirmed. Let's establish your baseline.</div>
+
+  <div class="two">
+    <div class="q" data-req="1"><label class="qlabel"><span class="qnum">01</span>Full Name <span class="req">*</span></label>
+      <input type="text" id="fullName" placeholder="First Last"></div>
+    <div class="q" data-req="1"><label class="qlabel"><span class="qnum">02</span>Email Address <span class="req">*</span></label>
+      <input type="email" placeholder="you@email.com"></div>
+  </div>
+  <div class="two">
+    <div class="q" data-req="1"><label class="qlabel"><span class="qnum">03</span>Phone Number <span class="req">*</span></label>
+      <input type="tel" placeholder="(555) 555-5555"></div>
+    <div class="q" data-req="1"><label class="qlabel"><span class="qnum">04</span>City &amp; State <span class="req">*</span></label>
+      <input type="text" placeholder="San Antonio, TX"></div>
+  </div>
+  <div class="q"><label class="qlabel"><span class="qnum">05</span>Target Market(s) <span class="hint">Which county/counties or metro areas are you wholesaling in (or planning to)?</span></label>
+    <input type="text" placeholder="e.g. Bexar County TX, Maricopa County AZ"></div>
+  <div class="q"><label class="qlabel"><span class="qnum">06</span>Do you have a legal business entity for your real estate business? <span class="hint">If yes, provide the business name and entity type (LLC, S-Corp, Sole Proprietorship, etc.)</span></label>
+    <input type="text" placeholder="e.g. Yes — Infinity Cash Offer LLC / No, not yet"></div>
+  <div class="q"><label class="qlabel"><span class="qnum">07</span>Do you currently have a full-time job, or are you doing real estate full-time? <span class="hint">If working a job, what are your working hours?</span></label>
+    <textarea placeholder="e.g. Full-time W2, Mon–Fri 8am–5pm CST"></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">08</span>Time zone &amp; best availability for coaching calls</label>
+    <input type="text" placeholder="e.g. CST — weekdays after 5pm, Saturdays flexible"></div>
+  <div class="q"><div class="qlabel"><span class="qnum">09</span>Preferred communication channel</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="comm"><span>Phone call</span></label>
+      <label class="opt"><input type="radio" name="comm"><span>Text / SMS</span></label>
+      <label class="opt"><input type="radio" name="comm"><span>Email</span></label>
+      <label class="opt"><input type="radio" name="comm"><span>Zoom</span></label>
+      <label class="opt"><input type="radio" name="comm"><span>Skool community</span></label>
+    </div></div>
+  <div class="q"><label class="qlabel"><span class="qnum">10</span>How did you find this coaching program? <span class="hint">Skool, Instagram, referral, YouTube, etc. — include your Skool/IG handle if you have one.</span></label>
+    <input type="text" placeholder="e.g. AI Cheat Codes Skool — @myhandle"></div>
+</section>
+
+<!-- ============ SECTION 2 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 02 / 08</div>
+  <h2>Experience &amp; Current Business Status</h2>
+  <div class="mod-desc">Scanning deal history and pipeline.</div>
+
+  <div class="q"><div class="qlabel"><span class="qnum">11</span>How long have you been involved in real estate investing?</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="exp"><span>Less than 6 months</span></label>
+      <label class="opt"><input type="radio" name="exp"><span>6 months – 1 year</span></label>
+      <label class="opt"><input type="radio" name="exp"><span>1–2 years</span></label>
+      <label class="opt"><input type="radio" name="exp"><span>2–5 years</span></label>
+      <label class="opt"><input type="radio" name="exp"><span>5+ years</span></label>
+    </div></div>
+  <div class="q"><label class="qlabel"><span class="qnum">12</span>How many wholesale deals have you closed? <span class="hint">Provide details, including deal structures and profits made.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">13</span>How many deals are you currently working on? <span class="hint">Under contract, pending, or in negotiations?</span></label>
+    <textarea></textarea></div>
+  <div class="q"><div class="qlabel"><span class="qnum">14</span>What are your biggest challenges in closing deals? <span class="hint">Check all that apply</span></div>
+    <div class="opts" data-group="check">
+      <label class="opt"><input type="checkbox"><span>Lead generation</span></label>
+      <label class="opt"><input type="checkbox"><span>Cold calling &amp; seller communication</span></label>
+      <label class="opt"><input type="checkbox"><span>Follow-up and consistency</span></label>
+      <label class="opt"><input type="checkbox"><span>Closing negotiations</span></label>
+      <label class="opt"><input type="checkbox"><span>Finding cash buyers</span></label>
+      <label class="opt"><input type="checkbox"><span>Handling objections</span></label>
+      <label class="opt"><input type="checkbox" class="otherToggle"><span>Other</span></label>
+    </div>
+    <div class="otherwrap"><input type="text" class="otherText" placeholder="Please specify"></div></div>
+  <div class="q"><div class="qlabel"><span class="qnum">15</span>What marketing strategies are you currently using to find leads? <span class="hint">Check all that apply</span></div>
+    <div class="opts" data-group="check">
+      <label class="opt"><input type="checkbox"><span>Cold Calling</span></label>
+      <label class="opt"><input type="checkbox"><span>SMS Marketing</span></label>
+      <label class="opt"><input type="checkbox"><span>Direct Mail</span></label>
+      <label class="opt"><input type="checkbox"><span>Driving for Dollars</span></label>
+      <label class="opt"><input type="checkbox"><span>Facebook/Google Ads</span></label>
+      <label class="opt"><input type="checkbox"><span>JV with other wholesalers</span></label>
+      <label class="opt"><input type="checkbox"><span>Bandit Signs</span></label>
+      <label class="opt"><input type="checkbox"><span>Networking &amp; Referrals</span></label>
+      <label class="opt"><input type="checkbox"><span>SEO (Website/GBP)</span></label>
+      <label class="opt"><input type="checkbox"><span>County records / public data</span></label>
+      <label class="opt"><input type="checkbox" class="otherToggle"><span>Other</span></label>
+    </div>
+    <div class="otherwrap"><input type="text" class="otherText" placeholder="Please specify"></div></div>
+  <div class="q"><label class="qlabel"><span class="qnum">16</span>Do you currently have a cash buyers list? <span class="hint">If so, how many buyers are on your list?</span></label>
+    <input type="text" placeholder="e.g. Yes — about 40 buyers / No list yet"></div>
+  <div class="q"><div class="qlabel"><span class="qnum">17</span>What is your preferred exit strategy? <span class="hint">Check all that apply</span></div>
+    <div class="opts" data-group="check">
+      <label class="opt"><input type="checkbox"><span>Assigning Contracts (Wholesaling)</span></label>
+      <label class="opt"><input type="checkbox"><span>Wholetailing</span></label>
+      <label class="opt"><input type="checkbox"><span>Fix and Flip</span></label>
+      <label class="opt"><input type="checkbox"><span>Buy and Hold (Rentals)</span></label>
+      <label class="opt"><input type="checkbox"><span>Creative Financing (Sub-To / Seller Finance)</span></label>
+      <label class="opt"><input type="checkbox"><span>Multi-Family Investing</span></label>
+      <label class="opt"><input type="checkbox" class="otherToggle"><span>Other</span></label>
+    </div>
+    <div class="otherwrap"><input type="text" class="otherText" placeholder="Please specify"></div></div>
+</section>
+
+<!-- ============ SECTION 3 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 03 / 08</div>
+  <h2>Tech, Tools &amp; AI Stack</h2>
+  <div class="mod-desc">Auditing your current systems. This program runs on automation — I need to know what you're working with.</div>
+
+  <div class="q"><label class="qlabel"><span class="qnum">18</span>What software and tools are you currently using in your business? <span class="hint">CRM, dialers, skip tracing, data providers, etc.</span></label>
+    <textarea placeholder="e.g. GoHighLevel, BatchDialer, DealMachine, PropStream..."></textarea></div>
+  <div class="q"><div class="qlabel"><span class="qnum">19</span>Do you currently use a CRM?</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="crm"><span>Yes — GoHighLevel</span></label>
+      <label class="opt"><input type="radio" name="crm"><span>Yes — other CRM</span></label>
+      <label class="opt"><input type="radio" name="crm"><span>No — spreadsheets/notes</span></label>
+      <label class="opt"><input type="radio" name="crm"><span>No system at all</span></label>
+    </div></div>
+  <div class="q"><div class="qlabel"><span class="qnum">20</span>Which AI tools have you used, if any? <span class="hint">Check all that apply</span></div>
+    <div class="opts" data-group="check">
+      <label class="opt"><input type="checkbox"><span>ChatGPT</span></label>
+      <label class="opt"><input type="checkbox"><span>Claude</span></label>
+      <label class="opt"><input type="checkbox"><span>AI voice / calling agents</span></label>
+      <label class="opt"><input type="checkbox"><span>n8n / Zapier automations</span></label>
+      <label class="opt"><input type="checkbox"><span>None yet</span></label>
+      <label class="opt"><input type="checkbox" class="otherToggle"><span>Other</span></label>
+    </div>
+    <div class="otherwrap"><input type="text" class="otherText" placeholder="Please specify"></div></div>
+  <div class="q"><div class="qlabel"><span class="qnum">21</span>How comfortable are you with technology and automation? <span class="hint">1 = not at all, 10 = very comfortable</span></div>
+    <div class="scale" data-group="radio">
+      <label class="opt"><input type="radio" name="tech"><span>1</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>2</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>3</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>4</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>5</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>6</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>7</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>8</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>9</span></label>
+      <label class="opt"><input type="radio" name="tech"><span>10</span></label>
+    </div></div>
+  <div class="q"><div class="qlabel"><span class="qnum">22</span>Are you open to letting AI systems (like JARVIS) handle parts of your lead gen and follow-up?</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="aiopen"><span>Absolutely — that's why I'm here</span></label>
+      <label class="opt"><input type="radio" name="aiopen"><span>Open, but need to learn how</span></label>
+      <label class="opt"><input type="radio" name="aiopen"><span>Prefer to do things manually</span></label>
+    </div></div>
+</section>
+
+<!-- ============ SECTION 4 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 04 / 08</div>
+  <h2>Financials &amp; Business Operations</h2>
+  <div class="mod-desc">Running the numbers. No judgment — just data.</div>
+
+  <div class="two">
+    <div class="q"><label class="qlabel"><span class="qnum">23</span>Current monthly revenue from wholesaling</label>
+      <input type="text" placeholder="$"></div>
+    <div class="q"><label class="qlabel"><span class="qnum">24</span>Average assignment fee per deal</label>
+      <input type="text" placeholder="$"></div>
+  </div>
+  <div class="two">
+    <div class="q"><label class="qlabel"><span class="qnum">25</span>Current monthly marketing budget <span class="hint">Be specific</span></label>
+      <input type="text" placeholder="$"></div>
+    <div class="q"><label class="qlabel"><span class="qnum">26</span>Estimated total monthly business expenses <span class="hint">Marketing, tools, VAs, overhead, etc.</span></label>
+      <input type="text" placeholder="$"></div>
+  </div>
+  <div class="q"><label class="qlabel"><span class="qnum">27</span>How much capital can you invest into growing the business over the next 90 days? <span class="hint">Marketing, data, software, team — separate from the coaching itself.</span></label>
+    <input type="text" placeholder="$"></div>
+  <div class="q"><div class="qlabel"><span class="qnum">28</span>Do you have access to earnest money deposits (EMD) and/or transactional funding when a deal hits?</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="emd"><span>Yes — my own capital</span></label>
+      <label class="opt"><input type="radio" name="emd"><span>Yes — funding partner / lender</span></label>
+      <label class="opt"><input type="radio" name="emd"><span>No — need help with this</span></label>
+    </div></div>
+  <div class="q"><label class="qlabel"><span class="qnum">29</span>Do you have a team? <span class="hint">If yes, list team members and their roles (VAs, cold callers, acquisitions, dispo, etc.)</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">30</span>How many hours per day/week can you dedicate to your wholesaling business?</label>
+    <input type="text" placeholder="e.g. 2 hrs/day weekdays, 6 hrs Saturdays"></div>
+  <div class="q"><label class="qlabel"><span class="qnum">31</span>What processes do you have in place to manage leads, deals, and follow-ups? <span class="hint">If none, describe what you're currently doing.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><div class="qlabel"><span class="qnum">32</span>How consistent is your lead generation?</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="leadgen"><span>Daily</span></label>
+      <label class="opt"><input type="radio" name="leadgen"><span>A few times per week</span></label>
+      <label class="opt"><input type="radio" name="leadgen"><span>Weekly</span></label>
+      <label class="opt"><input type="radio" name="leadgen"><span>Inconsistent</span></label>
+    </div></div>
+</section>
+
+<!-- ============ SECTION 5 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 05 / 08</div>
+  <h2>Goals &amp; Growth Plan</h2>
+  <div class="mod-desc">Setting the target. JARVIS needs coordinates.</div>
+
+  <div class="q"><label class="qlabel"><span class="qnum">33</span>What is your goal for your wholesaling business over the next 12 months? <span class="hint">Revenue, deal volume, team growth, etc.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">34</span>How many deals do you want to close per month?</label>
+    <input type="text"></div>
+  <div class="q"><label class="qlabel"><span class="qnum">35</span>What is your long-term real estate goal? <span class="hint">Wholesaling full-time, rental portfolio, fix &amp; flip, commercial, etc.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><div class="qlabel"><span class="qnum">36</span>What area(s) of real estate investing do you want to master? <span class="hint">Check all that apply</span></div>
+    <div class="opts" data-group="check">
+      <label class="opt"><input type="checkbox"><span>Closing more deals</span></label>
+      <label class="opt"><input type="checkbox"><span>Advanced negotiations</span></label>
+      <label class="opt"><input type="checkbox"><span>Direct-to-seller marketing</span></label>
+      <label class="opt"><input type="checkbox"><span>Dispositions &amp; selling contracts</span></label>
+      <label class="opt"><input type="checkbox"><span>Building a brand</span></label>
+      <label class="opt"><input type="checkbox"><span>Scaling a team</span></label>
+      <label class="opt"><input type="checkbox"><span>Creative financing</span></label>
+      <label class="opt"><input type="checkbox"><span>AI &amp; automation systems</span></label>
+      <label class="opt"><input type="checkbox"><span>County data / off-market lead gen</span></label>
+      <label class="opt"><input type="checkbox" class="otherToggle"><span>Other</span></label>
+    </div>
+    <div class="otherwrap"><input type="text" class="otherText" placeholder="Please specify"></div></div>
+  <div class="q"><label class="qlabel"><span class="qnum">37</span>What is your biggest weakness in business? <span class="hint">Be honest — this helps me coach you better.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">38</span>What is your biggest strength in business?</label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">39</span>What are 3 specific skills or habits you want to improve over the next 3 months?</label>
+    <textarea placeholder="1.&#10;2.&#10;3."></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">40</span>What are your top 3 priorities for the next 90 days in business?</label>
+    <textarea placeholder="1.&#10;2.&#10;3."></textarea></div>
+</section>
+
+<!-- ============ SECTION 6 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 06 / 08</div>
+  <h2>Commitment &amp; Mindset</h2>
+  <div class="mod-desc">Systems don't fail. People quit. Let's see where your head is at.</div>
+
+  <div class="q"><div class="qlabel"><span class="qnum">41</span>How serious are you about growing your business?</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="serious"><span>100% — I'm fully committed</span></label>
+      <label class="opt"><input type="radio" name="serious"><span>75% — Serious, but need guidance</span></label>
+      <label class="opt"><input type="radio" name="serious"><span>50% — Interested, unsure how to stay consistent</span></label>
+      <label class="opt"><input type="radio" name="serious"><span>25% — Testing the waters</span></label>
+    </div></div>
+  <div class="q"><div class="qlabel"><span class="qnum">42</span>Are you willing to reinvest a percentage of your profits back into your business for growth?</div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="reinvest"><span>Yes</span></label>
+      <label class="opt"><input type="radio" name="reinvest"><span>No</span></label>
+    </div></div>
+  <div class="q"><label class="qlabel"><span class="qnum">43</span>Have you ever struggled with mindset, limiting beliefs, or fear of failure? <span class="hint">If so, explain.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">44</span>What are your personal motivations for succeeding in real estate? <span class="hint">Family, financial freedom, quitting a job, legacy, etc.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">45</span>Who holds you accountable for success? <span class="hint">If no one, are you open to accountability within this coaching program?</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">46</span>What is your current daily routine for personal development? <span class="hint">Books, podcasts, mindset work, faith, fitness, etc.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">47</span>How do you handle setbacks or difficult situations in business?</label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">48</span>How do you define success for yourself?</label>
+    <textarea></textarea></div>
+</section>
+
+<!-- ============ SECTION 7 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 07 / 08</div>
+  <h2>Expectations</h2>
+  <div class="mod-desc">Alignment check — what you expect from me, and what I can expect from you.</div>
+
+  <div class="q"><label class="qlabel"><span class="qnum">49</span>What do you expect from me as your coach? <span class="hint">Be specific about the kind of mentorship, accountability, and guidance you need.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">50</span>What do you expect from yourself during this coaching program? <span class="hint">Commitments, execution, consistency, etc.</span></label>
+    <textarea></textarea></div>
+  <div class="q"><label class="qlabel"><span class="qnum">51</span>Is there anything else I should know about your situation, challenges, or goals?</label>
+    <textarea></textarea></div>
+</section>
+
+<!-- ============ SECTION 8 ============ -->
+<section class="mod">
+  <div class="mod-tag">Module 08 / 08</div>
+  <h2>Final Confirmation</h2>
+  <div class="mod-desc">Acknowledgment required before intake can be finalized.</div>
+
+  <div class="q" data-req="1"><div class="qlabel"><span class="qnum">52</span>I acknowledge that my success in this coaching program depends on my effort, consistency, and execution. <span class="req">*</span></div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="ack1"><span>Yes, I agree</span></label>
+      <label class="opt"><input type="radio" name="ack1"><span>No, I'm not ready</span></label>
+    </div></div>
+  <div class="q" data-req="1"><div class="qlabel"><span class="qnum">53</span>I am committed to taking action and implementing the strategies provided in this mentorship program. <span class="req">*</span></div>
+    <div class="opts" data-group="radio">
+      <label class="opt"><input type="radio" name="ack2"><span>Yes, I'm 100% in</span></label>
+      <label class="opt"><input type="radio" name="ack2"><span>No, I need more time</span></label>
+    </div></div>
+</section>
+
+<div class="finish" id="finish">
+  <h2>Finalize Intake</h2>
+  <p>JARVIS will compile your answers into a PDF. Download it, then send it directly to your coach to lock in your onboarding.</p>
+  <button id="dlBtn">⬇ Generate &amp; Download My Intake PDF</button>
+  <div id="formMsg"></div>
+</div>
+
+</main>
+
+<footer>
+  XCEREBRO AI // YOUR AI EMPLOYEE. RUNS YOUR BUSINESS 24/7.<br>
+  <a href="https://xcerebro.ai">xcerebro.ai</a>
+</footer>
+
+<script>
+(function(){
+  const RING_LEN = 119.4;
+  const qs = Array.from(document.querySelectorAll('.q'));
+
+  // ---- "Other" toggles ----
+  document.querySelectorAll('.otherToggle').forEach(cb=>{
+    cb.addEventListener('change',()=>{
+      const wrap = cb.closest('.q').querySelector('.otherwrap');
+      if(wrap) wrap.classList.toggle('show', cb.checked);
+    });
+  });
+
+  // ---- answer extraction ----
+  function getAnswer(q){
+    const group = q.querySelector('[data-group]');
+    if(group){
+      const picked = Array.from(group.querySelectorAll('input:checked'))
+        .map(i=>i.closest('.opt').querySelector('span:last-child').textContent.trim());
+      const other = q.querySelector('.otherText');
+      if(other && other.value.trim()){
+        const idx = picked.indexOf('Other');
+        if(idx>-1) picked[idx] = 'Other: '+other.value.trim();
+        else picked.push('Other: '+other.value.trim());
+      }
+      return picked.join('; ');
+    }
+    const field = q.querySelector('input,textarea,select');
+    return field ? field.value.trim() : '';
+  }
+  function labelOf(q){
+    const l = q.querySelector('.qlabel');
+    if(!l) return '';
+    const clone = l.cloneNode(true);
+    clone.querySelectorAll('.hint,.req').forEach(n=>n.remove());
+    return clone.textContent.replace(/\s+/g,' ').trim();
+  }
+
+  // ---- progress HUD ----
+  const ring = document.getElementById('ring');
+  const status = document.getElementById('hudStatus');
+  function refresh(){
+    const total = qs.length;
+    const done = qs.filter(q=>getAnswer(q)!=='').length;
+    const pct = Math.round(done/total*100);
+    ring.style.strokeDashoffset = RING_LEN*(1-done/total);
+    let msg;
+    if(done===0) msg = 'INTAKE <b>0%</b> COMPLETE — STANDING BY';
+    else if(pct<100) msg = 'INTAKE <b>'+pct+'%</b> COMPLETE — '+(total-done)+' FIELDS REMAINING';
+    else msg = 'INTAKE <b>100%</b> COMPLETE — READY TO FINALIZE';
+    status.innerHTML = msg;
+  }
+  document.getElementById('intakeForm').addEventListener('input', refresh);
+  document.getElementById('intakeForm').addEventListener('change', refresh);
+  refresh();
+
+  // ---- PDF generation ----
+  document.getElementById('dlBtn').addEventListener('click', generatePDF);
+
+  function generatePDF(){
+    const msg = document.getElementById('formMsg');
+    msg.classList.remove('ok');
+
+    // required checks
+    const missing = qs.filter(q=>q.dataset.req && getAnswer(q)==='');
+    if(missing.length){
+      msg.textContent = '⚠ REQUIRED FIELDS MISSING — name, contact info, and final confirmations must be completed.';
+      missing[0].scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    const email = document.querySelector('input[type=email]').value.trim();
+    if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      msg.textContent = '⚠ EMAIL FORMAT INVALID — please check field 02.';
+      return;
+    }
+
+    const btn = document.getElementById('dlBtn');
+    btn.disabled = true; btn.textContent = 'COMPILING...';
+
+    try{
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit:'pt', format:'letter'});
+      const W = doc.internal.pageSize.getWidth();
+      const H = doc.internal.pageSize.getHeight();
+      const M = 54;                 // margin
+      const CW = W - M*2;           // content width
+      let y = 0;
+
+      const BLUE = [59,130,246];
+      const DARKBLUE = [15,23,42];
+      const GRAY = [100,116,139];
+      const INK = [17,24,39];
+
+      function header(first){
+        doc.setFillColor(...DARKBLUE);
+        doc.rect(0,0,W, first?96:0, 'F');
+        if(first){
+          doc.setFillColor(...BLUE);
+          doc.rect(0,96,W,3,'F');
+          doc.setTextColor(96,165,250);
+          doc.setFont('courier','bold'); doc.setFontSize(9);
+          doc.text('JARVIS // STUDENT INTAKE PROTOCOL', M, 34);
+          doc.setTextColor(255,255,255);
+          doc.setFont('helvetica','bold'); doc.setFontSize(19);
+          doc.text('Wholesaling Coaching — Onboarding', M, 60);
+          doc.setTextColor(148,163,184);
+          doc.setFont('helvetica','normal'); doc.setFontSize(10);
+          const name = document.getElementById('fullName').value.trim() || 'Student';
+          doc.text('Student: '+name+'    |    Generated: '+new Date().toLocaleDateString(), M, 80);
+          y = 96+3+28;
+        } else { y = 60; }
+      }
+      function footerAll(){
+        const n = doc.internal.getNumberOfPages();
+        for(let i=1;i<=n;i++){
+          doc.setPage(i);
+          doc.setFont('courier','normal'); doc.setFontSize(8);
+          doc.setTextColor(...GRAY);
+          doc.text('XCEREBRO AI — xcerebro.ai/coaching', M, H-30);
+          doc.text('Page '+i+' of '+n, W-M, H-30, {align:'right'});
+        }
+      }
+      function need(h){
+        if(y+h > H-56){ doc.addPage(); header(false); }
+      }
+
+      header(true);
+
+      document.querySelectorAll('section.mod').forEach(sec=>{
+        const title = sec.querySelector('h2').textContent.trim();
+        need(46);
+        // section bar
+        doc.setFillColor(...BLUE);
+        doc.rect(M, y-11, 3, 15, 'F');
+        doc.setTextColor(...DARKBLUE);
+        doc.setFont('helvetica','bold'); doc.setFontSize(13);
+        doc.text(title, M+11, y);
+        y += 22;
+
+        sec.querySelectorAll('.q').forEach(q=>{
+          const label = labelOf(q);
+          const ans = getAnswer(q) || '—';
+          const lLines = doc.splitTextToSize(label, CW);
+          const aLines = doc.splitTextToSize(ans, CW-12);
+          const block = lLines.length*12 + aLines.length*12 + 16;
+          need(block);
+          doc.setFont('helvetica','bold'); doc.setFontSize(9.5);
+          doc.setTextColor(...INK);
+          doc.text(lLines, M, y);
+          y += lLines.length*12 + 2;
+          doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+          doc.setTextColor(55,65,81);
+          doc.text(aLines, M+12, y);
+          y += aLines.length*12 + 12;
+        });
+        y += 8;
+      });
+
+      footerAll();
+      const safeName = (document.getElementById('fullName').value.trim() || 'Student').replace(/[^a-z0-9]+/gi,'-');
+      doc.save('Jarvis-Coaching-Intake-'+safeName+'.pdf');
+      msg.classList.add('ok');
+      msg.textContent = '✓ INTAKE COMPILED — PDF downloaded. Send it to your coach to complete onboarding.';
+    }catch(err){
+      console.error(err);
+      msg.textContent = '⚠ PDF generation failed — check your connection and try again.';
+    }finally{
+      btn.disabled = false; btn.textContent = '⬇ Generate & Download My Intake PDF';
+    }
+  }
+})();
+</script>
+</body>
+</html>
