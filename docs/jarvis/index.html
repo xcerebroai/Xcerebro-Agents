@@ -189,16 +189,31 @@
   .copy.copied{background:#16321f; border-color:#2f7d4f; color:#7ee0a3}
   .nojs .copy{display:none}
   .install-note{color:var(--dim); font-size:.85rem; margin-top:12px; text-align:center}
-  /* Caption follows the download-button state (html.setup-live is set by
-     upgradeToSetupBinaries): Setup binaries live -> the "download, open it,
-     done" caption is primary and the command box demotes to a labeled
-     alternate path; script fallback -> the original one-liner caption. */
-  .note-setup{display:none; margin-top:14px}
-  .alt-label{display:none; color:var(--dim); font-size:.8rem; font-weight:600;
+  /* The download buttons point straight at the native installers
+     (JARVIS-Setup.exe/.dmg), so the "download, open it, done" caption is the
+     default state — it no longer waits on a runtime API call. The command box
+     stays available below as the labeled alternate path for terminal users. */
+  .note-setup{display:block; margin-top:14px}
+  .alt-label{display:block; color:var(--dim); font-size:.8rem; font-weight:600;
     letter-spacing:.08em; text-transform:uppercase; text-align:center; margin:0 0 10px}
-  html.setup-live .note-setup{display:block}
-  html.setup-live .alt-label{display:block}
-  html.setup-live .note-script{display:none}
+
+  /* First-run OS prompts. The installers are not code-signed yet, so both
+     platforms show a warning the first time; say so plainly here rather than
+     letting it look like a broken download. */
+  .plat-notes{display:flex; flex-wrap:wrap; justify-content:center; gap:8px 18px;
+    margin-top:12px; padding:0; list-style:none}
+  .plat-notes li{display:flex; align-items:center; gap:7px; color:var(--muted);
+    font-size:.8rem; line-height:1.45; background:rgba(17,26,46,.55);
+    border:1px solid var(--border); border-radius:8px; padding:7px 11px}
+  .plat-notes svg{width:13px; height:13px; flex:none; color:var(--light); opacity:.85}
+  .plat-notes b{color:var(--text); font-weight:600}
+  @media (max-width:560px){ .plat-notes{flex-direction:column; align-items:stretch} }
+
+  /* Script download links inside the terminal panel: the one-liners run a file
+     that used to arrive via the hero buttons, which now ship the installers. */
+  .script-get{margin:9px 0 0; text-align:center; font-size:.78rem; color:var(--dim)}
+  .script-get a{color:var(--light); text-decoration:none; border-bottom:1px solid rgba(96,165,250,.35)}
+  .script-get a:hover{border-bottom-color:var(--light)}
 
   /* ---------- PRODUCT SHOT ---------- */
   .product{padding:64px 0 48px}
@@ -455,18 +470,28 @@
       <p class="subtag">An AI agent that works across your desktop, terminal, and phone — with its own memory, its own skills, and the run of your tools.</p>
 
       <div class="downloads">
-        <a class="btn primary" id="btn-win" href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-windows.ps1">
+        <a class="btn primary" id="btn-win" href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/JARVIS-Setup.exe">
           <span class="halo" aria-hidden="true"></span>
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 5.1 10.5 4v7.5H3V5.1Zm0 13.8L10.5 20v-7.4H3v6.3Zm8.6 1.2L21 21.4V12.6h-9.4V20.1Zm0-16.2v7.6H21V2.6l-9.4 1.3Z"/></svg>
           <span>Download for Windows</span><span class="rec" data-rec></span>
         </a>
-        <a class="btn" id="btn-mac" href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-mac.sh">
+        <a class="btn" id="btn-mac" href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/JARVIS-Setup.dmg">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M16.5 3c.1 1.1-.35 2.15-1 2.9-.68.8-1.8 1.42-2.87 1.33-.12-1.06.39-2.17 1.02-2.87C14.4 3.6 15.55 3.05 16.5 3Zm3.2 14.9c-.5 1.16-.74 1.67-1.39 2.7-.9 1.43-2.18 3.2-3.76 3.22-1.4.02-1.76-.92-3.66-.9-1.9.01-2.3.92-3.7.89-1.58-.02-2.79-1.63-3.7-3.05-2.53-3.98-2.8-8.65-1.24-11.13C3.63 5.87 5.5 4.8 7.26 4.8c1.79 0 2.91.98 4.39.98 1.43 0 2.3-.98 4.37-.98 1.56 0 3.22.85 4.4 2.32-3.87 2.12-3.24 7.64-.72 8.78Z"/></svg>
           <span>Download for Mac</span><span class="rec" data-rec></span>
         </a>
       </div>
       <div class="detected" id="detected"></div>
-      <p class="install-note note-setup">Download, open it, done — the installer handles prerequisites, JARVIS, and the desktop app.</p>
+      <p class="install-note note-setup">Download, double-click, done — a native installer that sets up prerequisites, JARVIS, and the desktop app. It isn’t code-signed yet, so your system shows a warning the first time.</p>
+      <ul class="plat-notes">
+        <li>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M3 5.1 10.5 4v7.5H3V5.1Zm0 13.8L10.5 20v-7.4H3v6.3Zm8.6 1.2L21 21.4V12.6h-9.4V20.1Zm0-16.2v7.6H21V2.6l-9.4 1.3Z"/></svg>
+          <span><b>Windows:</b> If SmartScreen appears: More info → Run anyway.</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M16.5 3c.1 1.1-.35 2.15-1 2.9-.68.8-1.8 1.42-2.87 1.33-.12-1.06.39-2.17 1.02-2.87C14.4 3.6 15.55 3.05 16.5 3Zm3.2 14.9c-.5 1.16-.74 1.67-1.39 2.7-.9 1.43-2.18 3.2-3.76 3.22-1.4.02-1.76-.92-3.66-.9-1.9.01-2.3.92-3.7.89-1.58-.02-2.79-1.63-3.7-3.05-2.53-3.98-2.8-8.65-1.24-11.13C3.63 5.87 5.5 4.8 7.26 4.8c1.79 0 2.91.98 4.39.98 1.43 0 2.3-.98 4.37-.98 1.56 0 3.22.85 4.4 2.32-3.87 2.12-3.24 7.64-.72 8.78Z"/></svg>
+          <span><b>Mac:</b> If macOS blocks the installer: System Settings → Privacy &amp; Security → Open Anyway.</span>
+        </li>
+      </ul>
 
       <div class="hero-install">
         <p class="alt-label">Prefer the terminal?</p>
@@ -487,6 +512,7 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
                   <span class="lbl-do">Copy</span><span class="lbl-done">Copied</span></button>
               </div>
+              <p class="script-get">Need the script? <a href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-windows.ps1">Download jarvis-windows.ps1</a> to your Downloads folder first.</p>
             </div>
             <div class="panel panel-mac">
               <div class="cmdbar"><span class="prompt">$</span>
@@ -495,6 +521,7 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
                   <span class="lbl-do">Copy</span><span class="lbl-done">Copied</span></button>
               </div>
+              <p class="script-get">Need the script? <a href="https://github.com/xcerebroai/jarvis-agent/releases/latest/download/jarvis-mac.sh">Download jarvis-mac.sh</a> to your Downloads folder first.</p>
             </div>
           </div>
           <p class="install-note note-script">Run the one-liner after downloading. It installs prerequisites, JARVIS, and the desktop app.</p>
@@ -671,7 +698,7 @@
 
   <!-- ===== 6. FOOTER ===== -->
   <footer>
-    <a class="verbadge" href="https://github.com/xcerebroai/jarvis-agent/releases/latest"><span class="pip"></span>JARVIS v1.1.0</a>
+    <a class="verbadge" id="verbadge" href="https://github.com/xcerebroai/jarvis-agent/releases/latest"><span class="pip"></span><span id="verbadge-text">JARVIS — latest release</span></a>
     <div class="links">
       <a href="https://github.com/xcerebroai/jarvis-agent">GitHub</a>
       <a href="https://github.com/xcerebroai/jarvis-agent#readme">Docs</a>
@@ -721,25 +748,21 @@
       detected.innerHTML = 'JARVIS installs on <b>Mac</b> or <b>Windows</b>.';
     }
 
-    // ----- Prefer the native double-click installers (JARVIS-Setup.exe/.dmg)
-    //       once they're published as release assets; until then keep the
-    //       script downloads (.ps1/.sh) as the primary link. The one-liners
-    //       below remain the secondary path either way. GitHub's API is
-    //       CORS-enabled, so this works from a static page; any failure
-    //       (offline / rate-limit / no asset) silently keeps the scripts.
-    (function upgradeToSetupBinaries() {
-      if (!win && !mac) return;
+    // ----- Footer release badge: show the real tag when GitHub answers.
+    //       The download buttons no longer depend on this call — they point
+    //       straight at releases/latest/download/JARVIS-Setup.exe|.dmg, which
+    //       GitHub redirects to the newest asset with no API involved. This is
+    //       pure enhancement: the badge reads "JARVIS — latest release" on its
+    //       own, and any failure (offline / rate-limit) simply leaves it there.
+    //       No version is ever hardcoded in the markup.
+    (function showLatestTag() {
+      var label = document.getElementById('verbadge-text');
+      if (!label) return;
       fetch('https://api.github.com/repos/xcerebroai/jarvis-agent/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (rel) {
-          if (!rel || !rel.assets) return;
-          var url = {};
-          rel.assets.forEach(function (a) { url[a.name] = a.browser_download_url; });
-          var flipped = false;
-          if (win && url['JARVIS-Setup.exe']) { win.href = url['JARVIS-Setup.exe']; win.setAttribute('data-setup', '1'); flipped = true; }
-          if (mac && url['JARVIS-Setup.dmg']) { mac.href = url['JARVIS-Setup.dmg']; mac.setAttribute('data-setup', '1'); flipped = true; }
-          // Caption follows the buttons (see .note-setup/.alt-label CSS).
-          if (flipped) { document.documentElement.classList.add('setup-live'); }
+          var tag = rel && (rel.tag_name || rel.name);
+          if (tag) { label.textContent = 'JARVIS ' + tag; }
         })
         .catch(function () {});
     })();
